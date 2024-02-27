@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akiyama.IPC", "Akiyama.IPC\Akiyama.IPC.csproj", "{94D6D870-9C13-4CCF-B6D3-E68A0D5734D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akiyama.IPC.TestsNF", "Akiyama.IPC.TestsNF\Akiyama.IPC.TestsNF.csproj", "{3AD54556-E152-4328-B2F6-9D2858DB5087}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{94D6D870-9C13-4CCF-B6D3-E68A0D5734D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94D6D870-9C13-4CCF-B6D3-E68A0D5734D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94D6D870-9C13-4CCF-B6D3-E68A0D5734D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94D6D870-9C13-4CCF-B6D3-E68A0D5734D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AD54556-E152-4328-B2F6-9D2858DB5087}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AD54556-E152-4328-B2F6-9D2858DB5087}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AD54556-E152-4328-B2F6-9D2858DB5087}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AD54556-E152-4328-B2F6-9D2858DB5087}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {68D7396E-05BE-4279-B39C-2A17B964E9D2}
+	EndGlobalSection
+EndGlobal
