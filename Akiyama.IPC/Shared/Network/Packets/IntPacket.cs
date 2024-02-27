@@ -8,6 +8,8 @@
 
         public IntPacket() : base((int)PacketType.INT) { }
 
+        public override int ID { get; } = (int)PacketType.INT;
+
         public override void Populate()
         {
             this.NumberValue = PacketConstructor.BytesToInt32(this.Data);

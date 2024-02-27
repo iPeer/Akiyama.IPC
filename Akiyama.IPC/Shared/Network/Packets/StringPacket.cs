@@ -7,6 +7,8 @@
 
         public StringPacket() : base((int)PacketType.STRING) { }
 
+        public override int ID { get; } = (int)PacketType.STRING;
+
         public override void Populate()
         {
             // Here we can use this pakcet's data to fill in the packet's properties (in this case StringValue), you can do any amount of assignments here,

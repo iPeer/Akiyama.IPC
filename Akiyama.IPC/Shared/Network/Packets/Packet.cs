@@ -12,7 +12,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
 
         private bool _disposed;
 
-        public int ID { get; private set; }
+        public abstract int ID { get; }
 
         public byte[] Data { get; private set; }
         public byte[] Header { get; private set; }

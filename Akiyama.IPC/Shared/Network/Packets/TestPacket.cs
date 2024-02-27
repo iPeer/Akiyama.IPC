@@ -5,6 +5,8 @@ namespace Akiyama.IPC.Shared.Network.Packets
     public class TestPacket : Packet
     {
 
+        public override int ID { get; } = (int)PacketType.TEST_PACKET;
+
         public string Value = string.Empty;
 
         public TestPacket() : this((int)PacketType.TEST_PACKET) { }
