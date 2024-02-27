@@ -6,8 +6,6 @@
 
         public int NumberValue = 0;
 
-        public IntPacket() : base() { }
-
         public override int ID { get; } = (int)PacketType.INT;
 
         public override void Populate()

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Akiyama.IPC.Shared.Network
 {
     /// <summary>
-    /// The base class for IPC Endpoints. This class is abstract.
+    /// The base class for IPC Endpoints. This class is <see langword="abstract"/>.
     /// </summary>
     public abstract class PipeEndpoint : IDisposable
     {

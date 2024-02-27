@@ -25,7 +25,17 @@ namespace Akiyama.IPC.Shared.Network.Packets
 
         public int MaxDataLength { get; private set; } = int.MaxValue;
 
-        public Packet() { }
+        public Packet(byte[] data, int maxDataLength = int.MaxValue, bool autoDispose = true)
+        {
+            this.MaxDataLength = maxDataLength;
+            this.AutoDispose = autoDispose;
+            this.SetData(data);
+        }
+        public Packet(int maxDataLength = int.MaxValue, bool autoDispose = true)
+        {
+            this.MaxDataLength = maxDataLength;
+            this.AutoDispose = autoDispose;
+        }
 
         /// <summary>
         /// When overridden, allows the packet to populate its own properties from its data, for reference later.<br />

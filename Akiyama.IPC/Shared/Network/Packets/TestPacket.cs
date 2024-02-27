@@ -9,7 +9,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
 
         public string Value = string.Empty;
 
-        public TestPacket() : base() { this.SetData(Encoding.UTF8.GetBytes("This is a test packet")); }
+        public TestPacket() : base(Encoding.UTF8.GetBytes("This is a test packet")) { }
 
         public override void Populate()
         {

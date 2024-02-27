@@ -46,7 +46,6 @@
     <Compile Include="Server\PipeServer.cs" />
     <Compile Include="Shared\Events\OnPacketReceivedEventArgs.cs" />
     <Compile Include="Shared\Exceptions\UnknownPacketException.cs" />
-    <Compile Include="Shared\Network\IPacket.cs" />
     <Compile Include="Shared\Network\PipeEndpoint.cs" />
     <Compile Include="Shared\Network\PacketConstructor.cs" />
     <Compile Include="Shared\Network\Packets\IntPacket.cs" />
