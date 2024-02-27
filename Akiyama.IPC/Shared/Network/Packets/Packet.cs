@@ -23,6 +23,8 @@ namespace Akiyama.IPC.Shared.Network.Packets
 
         public bool AutoDispose { get; private set; } = true;
 
+        public int MaxDataLength { get; private set; } = int.MaxValue;
+
         public Packet() { }
 
         /// <summary>
@@ -40,6 +42,10 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// <param name="data"></param>
         public void SetData(byte[] data)
         {
+            if (data.Length > this.MaxDataLength)
+            {
+                throw new OverflowException($"Payload is too big for this packet's configuration. Max length is {this.MaxDataLength}, but given data was {data.Length}.");
+            }
             this.Data = data;
             if (!this.AutomaticHeaderUpdatesDisabled) { this.UpdateHeader(); }
         }
@@ -82,6 +88,11 @@ namespace Akiyama.IPC.Shared.Network.Packets
         public void SetAutoDispose(bool value)
         {
             this.AutoDispose = value;
+        }
+
+        public void SetMaxLength(int length)
+        {
+            this.MaxDataLength = length;
         }
 
         public void Dispose()
