@@ -21,15 +21,9 @@ namespace Akiyama.IPC.Shared.Network.Packets
         public int TotalLength => this.Data.Length + this.Header.Length;
         public bool AutomaticHeaderUpdatesDisabled { get; private set; }
 
-        public Packet(int packetType) : this(packetType, null) { }
-        public Packet(int packetType, byte[] data)
-        {
-            this.ID = packetType;
-            if (data != null && data.Length > 0)
-            {
-                this.SetData(data);
-            }
-        }
+        public bool AutoDispose { get; private set; } = true;
+
+        public Packet() { }
 
         /// <summary>
         /// When overridden, allows the packet to populate its own properties from its data, for reference later.<br />
@@ -83,6 +77,11 @@ namespace Akiyama.IPC.Shared.Network.Packets
         public void SetAutomaticHeaderUpdates(bool enabled)
         {
             this.AutomaticHeaderUpdatesDisabled = !enabled;
+        }
+
+        public void SetAutoDispose(bool value)
+        {
+            this.AutoDispose = value;
         }
 
         public void Dispose()

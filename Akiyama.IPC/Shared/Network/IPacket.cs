@@ -15,6 +15,8 @@ namespace Akiyama.IPC.Shared.Network
 
         bool AutomaticHeaderUpdatesDisabled { get; }
 
+        bool AutoDispose { get; }
+
         void Populate();
 
         void UpdateHeader();

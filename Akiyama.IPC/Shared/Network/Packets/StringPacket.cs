@@ -5,7 +5,7 @@
 
         public string StringValue = string.Empty;
 
-        public StringPacket() : base((int)PacketType.STRING) { }
+        public StringPacket() : base() { }
 
         public override int ID { get; } = (int)PacketType.STRING;
 
