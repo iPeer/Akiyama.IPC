@@ -1,4 +1,5 @@
 ﻿using Akiyama.IPC.Shared.Exceptions;
+using Akiyama.IPC.Shared.Network.Packets;
 using Akiyama.IPC.Shared.Typers;
 using System;
 using System.IO;
@@ -19,11 +20,11 @@ namespace Akiyama.IPC.Shared.Network
         }
 
         /// <summary>
-        /// Creates an <see cref="IPacket"/> from <paramref name="stream"/>.
+        /// Creates an <see cref="Packet"/> from <paramref name="stream"/>.
         /// </summary>
-        /// <param name="stream">The stream from which to read the bytes for this <see cref="IPacket"/>.</param>
-        /// <returns>An <see cref="IPacket"/> constructed fro mthe bytes contained within <paramref name="stream"/>.</returns>
-        public IPacket CreateFromStream(Stream stream)
+        /// <param name="stream">The stream from which to read the bytes for this <see cref="Packet"/>.</param>
+        /// <returns>An <see cref="Packet"/> constructed fro mthe bytes contained within <paramref name="stream"/>.</returns>
+        public Packet CreateFromStream(Stream stream)
         {
             if (stream.CanSeek && stream.Position != 0) { stream.Seek(0, SeekOrigin.Begin); }
             byte[] idBytes = new byte[4];
@@ -34,7 +35,7 @@ namespace Akiyama.IPC.Shared.Network
 
             int id = BytesToInt32(idBytes);
             int dataLength = BytesToInt32(dataLen);
-            IPacket packet = this.packetTyper.GetPacketObjectFromId(id) ?? throw new UnknownPacketException(id);
+            Packet packet = this.packetTyper.GetPacketObjectFromId(id) ?? throw new UnknownPacketException(id);
             byte[] pData = new byte[dataLength];
             stream.Read(pData, 0, pData.Length);
             packet.SetAutomaticHeaderUpdates(false);

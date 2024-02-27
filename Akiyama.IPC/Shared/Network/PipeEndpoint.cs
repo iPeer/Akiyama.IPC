@@ -1,4 +1,5 @@
 ﻿using Akiyama.IPC.Shared.Events;
+using Akiyama.IPC.Shared.Network.Packets;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,7 +26,7 @@ namespace Akiyama.IPC.Shared.Network
 
         public PacketConstructor PacketConstructor { get; protected set; }
 
-        private readonly List<IPacket> PacketQueue = new List<IPacket>();
+        private readonly List<Packet> PacketQueue = new List<Packet>();
 
         protected NamedPipeServerStream OUT_STREAM;
         protected NamedPipeClientStream IN_STREAM;
@@ -123,10 +124,10 @@ namespace Akiyama.IPC.Shared.Network
             drain.Wait();
         }
 
-        public void SendPacket(IEnumerable<IPacket> packets) => QueuePackets(packets);
-        public void SendPackets(IEnumerable<IPacket> packets) => QueuePackets(packets);
-        public void QueuePacket(IEnumerable<IPacket> packets) => QueuePackets(packets);
-        public void QueuePackets(IEnumerable<IPacket> packets)
+        public void SendPacket(IEnumerable<Packet> packets) => QueuePackets(packets);
+        public void SendPackets(IEnumerable<Packet> packets) => QueuePackets(packets);
+        public void QueuePacket(IEnumerable<Packet> packets) => QueuePackets(packets);
+        public void QueuePackets(IEnumerable<Packet> packets)
         {
             lock (threadLock)
             {
@@ -135,7 +136,7 @@ namespace Akiyama.IPC.Shared.Network
             }
         }
 
-        public void QueuePacket(IPacket packet)
+        public void QueuePacket(Packet packet)
         {
             lock (threadLock)
             {
@@ -148,9 +149,9 @@ namespace Akiyama.IPC.Shared.Network
         {
             if (this.QueueSendInProgress) { return; } 
             this.QueueSendInProgress = true;
-            List<IPacket> lCopy = this.PacketQueue.ToList();
+            List<Packet> lCopy = this.PacketQueue.ToList();
             this.PacketQueue.Clear();
-            foreach (IPacket p in lCopy)
+            foreach (Packet p in lCopy)
             {
                 this.SendPacketToStream(p);
             }
@@ -159,10 +160,10 @@ namespace Akiyama.IPC.Shared.Network
         }
 
         /// <summary>
-        /// Sends a <see cref="IPacket"/> to this endpoint's <see cref="OUT_STREAM"/>. The packet will be added to the <see cref="PipeEndpoint"/>'s queue.
+        /// Sends a <see cref="Packet"/> to this endpoint's <see cref="OUT_STREAM"/>. The packet will be added to the <see cref="PipeEndpoint"/>'s queue.
         /// </summary>
-        /// <param name="packet">The <see cref="IPacket"/> to be sent.</param>
-        private void SendPacketToStream(IPacket packet)
+        /// <param name="packet">The <see cref="Packet"/> to be sent.</param>
+        private void SendPacketToStream(Packet packet)
         {
             byte[] pBytes = new byte[packet.TotalLength + 1];
             pBytes[0] = this.PacketConstructor.PRE_PACKET_BYTE;
@@ -175,8 +176,8 @@ namespace Akiyama.IPC.Shared.Network
             this.SendBytes(pBytes);
         }
 
-        /// <inheritdoc cref="SendPacketToStream(IPacket)"/>
-        public void SendPacket(IPacket packet)
+        /// <inheritdoc cref="SendPacketToStream(Packet)"/>
+        public void SendPacket(Packet packet)
         {
             this.QueuePacket(packet);
         }
@@ -229,7 +230,7 @@ namespace Akiyama.IPC.Shared.Network
                     byte rBytes = (byte)_byte; // Just to make things easier
                     if (rBytes == this.PacketConstructor.PRE_PACKET_BYTE) // If the data starts with this magic byte, we got a packet - Later make this configurable??? (Also yes, I used the funny number)
                     {
-                        using (IPacket packet = this.PacketConstructor.CreateFromStream(this.IN_STREAM))
+                        using (Packet packet = this.PacketConstructor.CreateFromStream(this.IN_STREAM))
                         {
                             this.OnPacketReceived(new OnPacketReceivedEventArgs(packet));
                         }

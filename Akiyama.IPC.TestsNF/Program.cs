@@ -68,7 +68,7 @@ namespace AkiyamaIPC.TestsNF
                         StringPacket packetTwo = new StringPacket();
                         packetTwo.SetData(PacketConstructor.StringToBytes(stringTwo));
 
-                        server.SendPackets(new IPacket[] { packetOne, packetTwo });
+                        server.SendPackets(new Packet[] { packetOne, packetTwo });
 
                         StringPacket packetThree = new StringPacket();
                         packetThree.SetData(PacketConstructor.StringToBytes("A completely unrelated string packet"));
@@ -92,7 +92,7 @@ namespace AkiyamaIPC.TestsNF
 
         static void OnPacketRecvClient(object sender, OnPacketReceivedEventArgs eventArgs)
         {
-            IPacket packet = eventArgs.Packet;
+            Packet packet = eventArgs.Packet;
             Console.WriteLine($"[CLIENT] Packet received: {packet.TotalLength} bytes");
             Console.WriteLine($"[CLIENT] Header: 0x{string.Join(", 0x", packet.Header)}");
             Console.WriteLine($"[CLIENT] Data: 0x{string.Join(", 0x", packet.Data)}");
@@ -115,7 +115,7 @@ namespace AkiyamaIPC.TestsNF
 
         static void OnPacketRecvServer(object sender, OnPacketReceivedEventArgs eventArgs)
         {
-            IPacket packet = eventArgs.Packet;
+            Packet packet = eventArgs.Packet;
             Console.WriteLine($"[SERVER] Packet received: {packet.TotalLength} bytes");
             Console.WriteLine($"[SERVER] Header: 0x{string.Join(", 0x", packet.Header)}");
             Console.WriteLine($"[SERVER] Data: 0x{string.Join(", 0x", packet.Data)}");

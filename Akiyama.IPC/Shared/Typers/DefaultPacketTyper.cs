@@ -12,7 +12,7 @@ namespace Akiyama.IPC.Shared.Typers
 
         // There are multiple ways you can do this, but this is the way I prefer to do it.
         // For example, you could use literal int comparisons, or defined int consts, etc.
-        public override IPacket GetPacketObjectFromId(int id)
+        public override Packet GetPacketObjectFromId(int id)
         {
             switch (id)
             {

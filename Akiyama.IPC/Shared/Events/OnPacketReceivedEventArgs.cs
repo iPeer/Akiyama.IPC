@@ -1,12 +1,12 @@
-﻿using Akiyama.IPC.Shared.Network;
+﻿using Akiyama.IPC.Shared.Network.Packets;
 using System;
 
 namespace Akiyama.IPC.Shared.Events
 {
     public class OnPacketReceivedEventArgs : EventArgs
     {
-        public readonly IPacket Packet;
-        public OnPacketReceivedEventArgs(IPacket packet) { this.Packet = packet; }
+        public readonly Packet Packet;
+        public OnPacketReceivedEventArgs(Packet packet) { this.Packet = packet; }
 
     }
 }

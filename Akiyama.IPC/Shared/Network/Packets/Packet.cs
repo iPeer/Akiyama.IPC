@@ -7,7 +7,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
     /// <summary>
     /// Represents the base class for IPC packets. This class is <see langword="abstract"/>.
     /// </summary>
-    public abstract class Packet : IPacket, IDisposable
+    public abstract class Packet : IDisposable
     {
 
         private bool _disposed;
@@ -28,7 +28,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// <summary>
         /// When overridden, allows the packet to populate its own properties from its data, for reference later.<br />
         /// For example, see <see cref="StringPacket.Populate"/>.
-        /// <br />If not overridden, the packet will not be populated, however its data will still be available via <see cref="IPacket.Data"/>.
+        /// <br />If not overridden, the packet will not be populated, however its data will still be available via <see cref="Packet.Data"/>.
         /// </summary>
         public virtual void Populate() { }
 
