@@ -14,7 +14,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
 
         public abstract int ID { get; }
 
-        public byte[] Data { get; private set; }
+        public byte[] Data { get; private set; } = Array.Empty<byte>(); // BF-08-02-2024: Prevent Data from defaulting to null in packets that don't pass any data
         public byte[] Header { get; private set; }
         public int HeaderLength => this.Header.Length;
         public int DataLength => this.Data.Length;
@@ -35,6 +35,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
         {
             this.MaxDataLength = maxDataLength;
             this.AutoDispose = autoDispose;
+            this.UpdateHeader(); // BF-28-02-2024: Ensure headers are updated on new packets to prevent their values being nulls
         }
 
         /// <summary>
