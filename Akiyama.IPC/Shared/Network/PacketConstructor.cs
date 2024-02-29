@@ -23,7 +23,7 @@ namespace Akiyama.IPC.Shared.Network
         /// Creates an <see cref="Packet"/> from <paramref name="stream"/>.
         /// </summary>
         /// <param name="stream">The stream from which to read the bytes for this <see cref="Packet"/>.</param>
-        /// <returns>An <see cref="Packet"/> constructed fro mthe bytes contained within <paramref name="stream"/>.</returns>
+        /// <returns>A <see cref="Packet"/> constructed from the bytes contained within <paramref name="stream"/>.</returns>
         public Packet CreateFromStream(Stream stream)
         {
             if (stream.CanSeek && stream.Position != 0) { stream.Seek(0, SeekOrigin.Begin); }
@@ -65,7 +65,7 @@ namespace Akiyama.IPC.Shared.Network
         }
 
         /// <summary>
-        /// Converts the specified integer into its representitive bytes.
+        /// Converts the specified integer into its representative bytes.
         /// </summary>
         /// <param name="int">The int to convert.</param>
         /// <returns>A byte array containing the bytes required to construct <paramref name="int"/>.</returns>
@@ -76,10 +76,23 @@ namespace Akiyama.IPC.Shared.Network
             return bytes;
         }
 
+        /// <summary>
+        /// Convert the given <see cref="UInt32"/> into its representatives bytes.
+        /// </summary>
+        /// <param name="uint">The UInt32 to convert</param>
+        /// <returns>A byte array containing the bytes that represent <paramref name="uint"/>.</returns>
+        public static byte[] UInt32ToBytes(uint @uint) => Int32ToBytes((int)@uint);
+        /// <summary>
+        /// Turns the given <paramref name="bytes"/> into the <see cref="UInt32"/> they represent.
+        /// </summary>
+        /// <param name="bytes">The bytes to convert.</param>
+        /// <returns>A <see cref="UInt32"/> constructive from its representive bytes in <paramref name="bytes"/>.</returns>
+        public static uint BytesToUInt32(byte[] bytes) => (uint)BytesToInt32(bytes);
+
         /// <inheritdoc cref="Int64ToBytes(long)"/>
         public static byte[] LongToBytes(long @long) => Int64ToBytes(@long);
         /// <summary>
-        /// Converts <paramref name="long"/> into its representitive bytes.
+        /// Converts <paramref name="long"/> into its representative bytes.
         /// </summary>
         /// <param name="long">The <see cref="long"/> to convert.</param>
         /// <returns>A byte array containing the bytes required to construct <paramref name="long"/>.</returns>
@@ -103,6 +116,127 @@ namespace Akiyama.IPC.Shared.Network
             if (bytes.Length != 8) { throw new InvalidOperationException("Specified byte[] is not a long"); }
             if (!BitConverter.IsLittleEndian) { bytes.Reverse(); }
             return BitConverter.ToInt64(bytes, 0);
+        }
+
+        /// <summary>
+        /// Converts <paramref name="ulong"/> into its representative bytes.
+        /// </summary>
+        /// <param name="ulong">The <see cref="UInt64"/> to convert.</param>
+        /// <returns>A byte array containing the bytes that represent <paramref name="ulong"/>.</returns>
+        public static byte[] ULongToBytes(ulong @ulong) => UInt64ToBytes(@ulong);
+        /// <inheritdoc cref="ULongToBytes(ulong)"/>
+        public static byte[] UInt64ToBytes(ulong @ulong) => Int64ToBytes((long)@ulong);
+        /// <summary>
+        /// Converts the given <paramref name="bytes"/> into the <see cref="UInt64"/> they represent.
+        /// </summary>
+        /// <param name="bytes">The bytes to convert.</param>
+        /// <returns>A <see cref="UInt64"/> constructed from the bytes in <paramref name="bytes"/>.</returns>
+        public static ulong BytesToULong(byte[] bytes) => BytesToUInt64(bytes);
+        /// <inheritdoc cref="BytesToULong(byte[])"/>
+        public static ulong BytesToUInt64(byte[] bytes) => (ulong)BytesToInt64(bytes);
+
+        /// <summary>
+        /// Converts <paramref name="short"/> into its representative bytes.
+        /// </summary>
+        /// <param name="short">The <see cref="UInt16"/> to convert.</param>
+        /// <returns>A byte array containing the bytes that represent <paramref name="short"/>.</returns>
+        public static byte[] ShortToBytes(short @short) => Int16ToBytes(@short);
+        /// <inheritdoc cref="ShortToBytes(short)"/>
+        public static byte[] Int16ToBytes(short @short)
+        {
+            byte[] bytes = BitConverter.GetBytes(@short);
+            if (!BitConverter.IsLittleEndian) { bytes.Reverse(); }
+            return bytes;
+        }
+        /// <summary>
+        /// Converts the given <paramref name="bytes"/> into the <see cref="Int16"/> they represent.
+        /// </summary>
+        /// <param name="bytes">The bytes to convert.</param>
+        /// <returns>A <see cref="Int16"/> constructed from the bytes in <paramref name="bytes"/>.</returns>
+        public static short BytesToShort(byte[] bytes) => BytesToInt16(bytes);
+        /// <inheritdoc cref="BytesToShort(byte[])"/>
+        public static short BytesToInt16(byte[] bytes)
+        {
+            if (!BitConverter.IsLittleEndian) { bytes.Reverse(); }
+            return BitConverter.ToInt16(bytes, 0);
+        }
+
+        /// <summary>
+        /// Converts <paramref name="bytes"/> into the UTF-16 <see cref="char"/> they represent.
+        /// </summary>
+        /// <param name="bytes">The bytes to convert.</param>
+        /// <returns>A <see cref="char"/> constructed from the bytes in <paramref name="bytes"/>.</returns>
+        public static char BytesToChar(byte[] bytes) => (char)BytesToInt16(bytes);
+        /// <summary>
+        /// Converts a UTF-16 character into its representative bytes.
+        /// </summary>
+        /// <param name="char">The <see cref="char"/> to convert.</param>
+        /// <returns>A byte array containing the bytes that represent <paramref name="char"/>.</returns>
+        public static byte[] CharToBytes(char @char) => Int16ToBytes((short)@char);
+
+        /// <summary>
+        /// Converts <paramref name="ushort"/> into its representative bytes.
+        /// </summary>
+        /// <param name="ushort">The <see cref="UInt16"/> to convert.</param>
+        /// <returns>A byte array containing the bytes that represent <paramref name="ushort"/>.</returns>
+        public static byte[] UShortToBytes(ushort @ushort) => UInt16ToBytes(@ushort);
+        /// <inheritdoc cref="UShortToBytes(ushort)"/>
+        public static byte[] UInt16ToBytes(ushort @ushort) => Int16ToBytes((short)@ushort);
+        /// <summary>
+        /// Converts the given <paramref name="bytes"/> into the <see cref="UInt16"/> they represent.
+        /// </summary>
+        /// <param name="bytes">The bytes to convert.</param>
+        /// <returns>A <see cref="UInt16"/> constructed from the bytes in <paramref name="bytes"/>.</returns>
+        public static ushort BytesToUShort(byte[] bytes) => (ushort)BytesToInt16(bytes);
+        /// <inheritdoc cref="BytesToUShort(byte[])"/>
+        public static ushort BytesToUInt16(byte[] bytes) => (ushort)BytesToInt16(bytes);
+
+        /// <summary>
+        /// Converts <paramref name="float"/> into its representative bytes.
+        /// </summary>
+        /// <param name="float">The <see cref="Single"/> to convert.</param>
+        /// <returns>A byte array containing the bytes that represent <paramref name="float"/>.</returns>
+        public static byte[] SingleToBytes(float @float) => FloatToBytes(@float);
+        /// <inheritdoc cref="SingleToBytes(float)"/>
+        public static byte[] FloatToBytes(float @float)
+        {
+            byte[] bytes = BitConverter.GetBytes(@float);
+            if (!BitConverter.IsLittleEndian) { bytes.Reverse(); }
+            return bytes;
+        }
+        /// <summary>
+        /// Converts the given <paramref name="bytes"/> into the <see cref="Single"/> they represent.
+        /// </summary>
+        /// <param name="bytes">The bytes to convert.</param>
+        /// <returns>A <see cref="Single"/> constructed from the bytes in <paramref name="bytes"/>.</returns>
+        public static float BytesToSingle(byte[] bytes) => BytesToFloat(bytes);
+        /// <inheritdoc cref="BytesToSingle(byte[])"/>
+        public static float BytesToFloat(byte[] bytes)
+        {
+            if (!BitConverter.IsLittleEndian) { bytes.Reverse(); }
+            return BitConverter.ToSingle(bytes, 0);
+        }
+
+        /// <summary>
+        /// Converts <paramref name="double"/> into its representative bytes.
+        /// </summary>
+        /// <param name="double">The <see cref="Double"/> to convert.</param>
+        /// <returns>A byte array containing the bytes that represent <paramref name="double"/>.</returns>
+        public static byte[] DoubleToBytes(double @double)
+        {
+            byte[] bytes = BitConverter.GetBytes(@double);
+            if (!BitConverter.IsLittleEndian) { bytes.Reverse(); }
+            return bytes;
+        }
+        /// <summary>
+        /// Converts the given <paramref name="bytes"/> into the <see cref="Double"/> they represent.
+        /// </summary>
+        /// <param name="bytes">The bytes to convert.</param>
+        /// <returns>A <see cref="Double"/> constructed from the bytes in <paramref name="bytes"/>.</returns>
+        public static double BytesToDouble(byte[] bytes)
+        {
+            if (!BitConverter.IsLittleEndian) { bytes.Reverse(); }
+            return BitConverter.ToDouble(bytes, 0);
         }
 
         /// <summary>
