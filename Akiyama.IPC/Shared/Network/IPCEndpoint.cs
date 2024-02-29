@@ -39,6 +39,8 @@ namespace Akiyama.IPC.Shared.Network
 
         private object threadLock = new object();
 
+        private CancellationTokenSource pipeDrainCancellationToken = new CancellationTokenSource();
+
         /* EVENTS */
 
         public event EventHandler<EventArgs> ConnectionsEstablished;
@@ -111,17 +113,27 @@ namespace Akiyama.IPC.Shared.Network
             this.IsShuttingDown = true;
             if (this.CompletedConnections)
             {
-                // UTODO: Send disconnect packet to client to it can gracefully close the "IN" stream on its end
+                this.pipeDrainCancellationToken.Cancel();
                 this.OUT_STREAM.Disconnect();
             }
         }
 
         private void SendBytes(byte[] bytes)
         {
+            // TODO: Maybe rewrite this part to use 'using'?
+            // The send task cannot (theoretically) hang forever, so we don't need to be able to cancel it during shutdown as it will presumably finish eventually
             Task send = Task.Run(() => this.OUT_STREAM.Write(bytes, 0, bytes.Length));
             send.Wait();
+            // The drain task, however...
             Task drain = Task.Run(() => this.OUT_STREAM.WaitForPipeDrain());
-            drain.Wait();
+            try
+            {
+                drain.Wait(cancellationToken: this.pipeDrainCancellationToken.Token);
+            }
+            catch (OperationCanceledException) { } // The only time the task is ever cancelled is during a shutdown, so ignore the exception.
+
+            send.Dispose();
+            drain.Dispose();
         }
 
         public void SendPacket(IEnumerable<Packet> packets) => QueuePackets(packets);
