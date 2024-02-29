@@ -100,7 +100,7 @@ namespace AkiyamaIPC.TestsNF
             PacketType pt = (PacketType)packet.ID;
             if (pt == PacketType.STRING)
             {
-                Console.WriteLine($"[CLIENT] String packet, got value: {((StringPacket)packet).StringValue}");
+                Console.WriteLine($"[CLIENT] String packet, got value: {((StringPacket)packet).Text}");
             }
             else if (pt == PacketType.INT)
             {
@@ -123,7 +123,7 @@ namespace AkiyamaIPC.TestsNF
             PacketType pt = (PacketType)packet.ID;
             if (pt == PacketType.STRING)
             {
-                Console.WriteLine($"[SERVER] String packet, got value: {((StringPacket)packet).StringValue}");
+                Console.WriteLine($"[SERVER] String packet, got value: {((StringPacket)packet).Text}");
             }
             else if (pt == PacketType.INT)
             {
