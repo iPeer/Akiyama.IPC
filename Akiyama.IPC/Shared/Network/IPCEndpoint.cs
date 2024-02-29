@@ -115,6 +115,7 @@ namespace Akiyama.IPC.Shared.Network
             {
                 this.pipeDrainCancellationToken.Cancel();
                 this.OUT_STREAM.Disconnect();
+                this.IN_STREAM.Close();
             }
         }
 
