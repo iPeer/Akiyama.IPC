@@ -64,14 +64,17 @@ namespace AkiyamaIPC.TestsNF
 
                         StringPacket packetOne = new StringPacket();
                         packetOne.SetData(PacketConstructor.StringToBytes(stringOne));
+                        packetOne.SetCustomHeaderByte(1, 0);
 
                         StringPacket packetTwo = new StringPacket();
                         packetTwo.SetData(PacketConstructor.StringToBytes(stringTwo));
+                        packetTwo.SetCustomHeaderByte(2, 0);
 
                         server.SendPackets(new Packet[] { packetOne, packetTwo });
 
                         StringPacket packetThree = new StringPacket();
                         packetThree.SetData(PacketConstructor.StringToBytes("A completely unrelated string packet"));
+                        packetThree.SetCustomHeaderByte(3, 0);
                         server.SendPacket(packetThree);
 
                         break;

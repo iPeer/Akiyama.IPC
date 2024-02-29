@@ -29,14 +29,17 @@ namespace Akiyama.IPC.Shared.Network
             if (stream.CanSeek && stream.Position != 0) { stream.Seek(0, SeekOrigin.Begin); }
             byte[] idBytes = new byte[4];
             stream.Read(idBytes, 0, idBytes.Length);
-            byte[] _ = new byte[Packet.MAX_HEADER_SIZE - (sizeof(int) * 2)]; // Skip over the "customisable" bytes of the header
-            stream.Read(_, 0, _.Length);
+            byte[] customData = new byte[Packet.MAX_HEADER_SIZE - (sizeof(int) * 2)];
+            stream.Read(customData, 0, customData.Length);
             byte[] dataLen = new byte[4];
             stream.Read(dataLen, 0, dataLen.Length);
 
             int id = BytesToInt32(idBytes);
             int dataLength = BytesToInt32(dataLen);
             Packet packet = this.packetTyper.GetPacketObjectFromId(id) ?? throw new UnknownPacketException(id);
+
+            packet.SetCustomHeaderBytes(customData, 0); // BF 29/02/2024: Fix packets losing their custom data after transmission over the socket
+
             byte[] pData = new byte[dataLength];
             stream.Read(pData, 0, pData.Length);
             packet.SetAutomaticHeaderUpdates(false);
