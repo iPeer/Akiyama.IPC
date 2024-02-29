@@ -6,11 +6,11 @@ using System.Threading;
 
 namespace Akiyama.IPC.Client
 {
-    public class PipeClient : PipeEndpoint, IDisposable
+    public class IPCClient : IPCEndpoint, IDisposable
     {
 
-        public PipeClient(string pipeName) : this(pipeName, new DefaultPacketTyper()) { }
-        public PipeClient(string pipeName, PacketTyper typer)
+        public IPCClient(string pipeName) : this(pipeName, new DefaultPacketTyper()) { }
+        public IPCClient(string pipeName, PacketTyper typer)
         {
             this.PacketConstructor = new PacketConstructor(typer);
             this.Name = pipeName.Replace(" ", "_");

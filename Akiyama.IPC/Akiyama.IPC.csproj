@@ -41,12 +41,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Client\PipeClient.cs" />
+    <Compile Include="Client\IPCClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Server\PipeServer.cs" />
+    <Compile Include="Server\IPCServer.cs" />
     <Compile Include="Shared\Events\OnPacketReceivedEventArgs.cs" />
     <Compile Include="Shared\Exceptions\UnknownPacketException.cs" />
-    <Compile Include="Shared\Network\PipeEndpoint.cs" />
+    <Compile Include="Shared\Network\IPCEndpoint.cs" />
     <Compile Include="Shared\Network\PacketConstructor.cs" />
     <Compile Include="Shared\Network\Packets\IntPacket.cs" />
     <Compile Include="Shared\Network\Packets\Packet.cs" />

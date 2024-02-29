@@ -13,7 +13,7 @@ namespace Akiyama.IPC.Shared.Network
     /// <summary>
     /// The base class for IPC Endpoints. This class is <see langword="abstract"/>.
     /// </summary>
-    public abstract class PipeEndpoint : IDisposable
+    public abstract class IPCEndpoint : IDisposable
     {
 
         public string Name { get; protected set; }
@@ -160,7 +160,7 @@ namespace Akiyama.IPC.Shared.Network
         }
 
         /// <summary>
-        /// Sends a <see cref="Packet"/> to this endpoint's <see cref="OUT_STREAM"/>. The packet will be added to the <see cref="PipeEndpoint"/>'s queue.
+        /// Sends a <see cref="Packet"/> to this endpoint's <see cref="OUT_STREAM"/>. The packet will be added to the <see cref="IPCEndpoint"/>'s queue.
         /// </summary>
         /// <param name="packet">The <see cref="Packet"/> to be sent.</param>
         private void SendPacketToStream(Packet packet)

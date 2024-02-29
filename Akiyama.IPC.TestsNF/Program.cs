@@ -12,8 +12,8 @@ namespace AkiyamaIPC.TestsNF
         static void Main(string[] args)
         {
 
-            PipeServer server = new PipeServer("IPC-Tests-CLI");
-            PipeClient client = new PipeClient("IPC-Tests-CLI");
+            IPCServer server = new IPCServer("IPC-Tests-CLI");
+            IPCClient client = new IPCClient("IPC-Tests-CLI");
 
             client.PacketReceived += OnPacketRecvClient;
             server.PacketReceived += OnPacketRecvServer;

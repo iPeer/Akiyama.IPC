@@ -7,11 +7,11 @@ using System.Threading;
 
 namespace Akiyama.IPC.Server
 {
-    public class PipeServer : PipeEndpoint, IDisposable
+    public class IPCServer : IPCEndpoint, IDisposable
     {
 
 
-        public PipeServer()
+        public IPCServer()
         {
 
             this.Name = this.GenerateNameHash();
@@ -20,9 +20,9 @@ namespace Akiyama.IPC.Server
 
         }
 
-        public PipeServer(string pipeName) : this(pipeName, new DefaultPacketTyper()) { }
+        public IPCServer(string pipeName) : this(pipeName, new DefaultPacketTyper()) { }
 
-        public PipeServer(string pipeName, PacketTyper typer)
+        public IPCServer(string pipeName, PacketTyper typer)
         {
             this.PacketConstructor = new PacketConstructor(typer);
             this.Name = pipeName.Replace(" ", "_");
