@@ -4,11 +4,16 @@
     {
         public override int ID => (int)PacketType.USHORT;
 
-        public short Value { get; private set; }
+        public ushort Value { get; set; }
 
         public override void Populate()
         {
-            this.Value = PacketConstructor.BytesToInt16(this.Data);
+            this.Value = PacketConstructor.BytesToUInt16(this.Data);
+        }
+
+        public override void Prepare()
+        {
+            this.SetData(PacketConstructor.UInt16ToBytes(this.Value));
         }
     }
 }

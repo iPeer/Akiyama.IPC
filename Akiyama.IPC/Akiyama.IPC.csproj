@@ -48,10 +48,16 @@
     <Compile Include="Shared\Exceptions\UnknownPacketException.cs" />
     <Compile Include="Shared\Network\IPCEndpoint.cs" />
     <Compile Include="Shared\Network\PacketConstructor.cs" />
+    <Compile Include="Shared\Network\Packets\GZipPacket.cs" />
     <Compile Include="Shared\Network\Packets\IntPacket.cs" />
+    <Compile Include="Shared\Network\Packets\LongPacket.cs" />
     <Compile Include="Shared\Network\Packets\Packet.cs" />
+    <Compile Include="Shared\Network\Packets\ShortPacket.cs" />
     <Compile Include="Shared\Network\Packets\StringPacket.cs" />
     <Compile Include="Shared\Network\Packets\TestPacket.cs" />
+    <Compile Include="Shared\Network\Packets\UIntPacket.cs" />
+    <Compile Include="Shared\Network\Packets\ULongPacket.cs" />
+    <Compile Include="Shared\Network\Packets\UShortPacket.cs" />
     <Compile Include="Shared\Network\PacketType.cs" />
     <Compile Include="Shared\Typers\DefaultPacketTyper.cs" />
     <Compile Include="Shared\Typers\PacketTyper.cs" />

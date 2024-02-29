@@ -178,6 +178,7 @@ namespace Akiyama.IPC.Shared.Network
         /// <param name="packet">The <see cref="Packet"/> to be sent.</param>
         private void SendPacketToStream(Packet packet)
         {
+            packet.Prepare();
             byte[] pBytes = new byte[packet.TotalLength + 1];
             pBytes[0] = this.PacketConstructor.PRE_PACKET_BYTE;
             Array.Copy(packet.Header, 0, pBytes, 1, packet.HeaderLength);

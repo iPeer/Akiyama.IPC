@@ -41,11 +41,26 @@ namespace Akiyama.IPC.Shared.Network.Packets
         }
 
         /// <summary>
-        /// When overridden, allows the packet to populate its own properties from its data, for reference later.<br />
-        /// For example, see <see cref="StringPacket.Populate"/>.
-        /// <br />If not overridden, the packet will not be populated, however its data will still be available via <see cref="Packet.Data"/>.
+        /// When overridden, allows the packet to set up data after being received, so that it may be accessed later, for example through Properties.
+        /// <br />If not overridden, the packet will not be populated, however its raw data will still be available via <see cref="Data"/>.
+        /// <br />For examples of this method's usage, see <seealso href="https://github.com/iPeer/Akiyama.IPC/blob/master/Akiyama.IPC/Shared/Network/Packets/TestPacket.cs"/>.
+        /// <br /><br />
+        /// <b>This method is called immediately after the packet is received.</b>
         /// </summary>
         public virtual void Populate() { }
+
+        /// <summary>
+        /// When overridden, allows the packet to prepare data before being sent, such as setting its data to be set using its internal properties.
+        /// <br />If not overridden, the packet will not prepare anything before transmission, and any data not already added to <see cref="Data"/> is lost.
+        /// <br />For examples of this method's usage, see <seealso href="https://github.com/iPeer/Akiyama.IPC/blob/master/Akiyama.IPC/Shared/Network/Packets/TestPacket.cs"/>.
+        /// <br /><br />
+        /// <b>This method is called immediately before the packet is sent.</b>
+        /// <br />
+        /// <br /><b>Note</b>: When setting the packet's data, it should be done via <see cref="SetData(byte[])"/>, as assigning it directly to the <see cref="Data"/> property will not update the packet's header without <see cref="UpdateHeader()"/> being called.
+        /// <br />If <c><see cref="AutomaticHeaderUpdatesDisabled"/></c> is set to <b>true</b>, <see cref="SetData(byte[])"/> <b>will not automatically update the packet's headers</b> and the user <b>must</b> call <see cref="UpdateHeader()"/> manually.
+        /// <br /><br /><b>WARNING</b>: This method can be destructive to data already contained within <see cref="Data"/> if the overriding method is not written in a way that preserves it.
+        /// </summary>
+        public virtual void Prepare() { }
 
         /// <summary>
         /// Sets the data for this packet.

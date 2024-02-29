@@ -10,6 +10,7 @@
         UINT = 5,
         USHORT = 6,
         ULONG = 7,
+        GZIP = 100,
         TEST_PACKET = 255,
 
     }

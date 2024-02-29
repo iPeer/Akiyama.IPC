@@ -51,7 +51,7 @@ namespace AkiyamaIPC.TestsNF
                         string @string = Console.ReadLine();
                         using (StringPacket sp = new StringPacket())
                         {
-                            sp.SetData(PacketConstructor.StringToBytes(@string));
+                            sp.Text = @string;
                             server.SendPacket(sp);
                         }
                         break;
@@ -63,18 +63,18 @@ namespace AkiyamaIPC.TestsNF
                         string stringTwo = Console.ReadLine();
 
                         StringPacket packetOne = new StringPacket();
-                        packetOne.SetData(PacketConstructor.StringToBytes(stringOne));
                         packetOne.SetCustomHeaderByte(1, 0);
+                        packetOne.Text = stringOne;
 
                         StringPacket packetTwo = new StringPacket();
-                        packetTwo.SetData(PacketConstructor.StringToBytes(stringTwo));
                         packetTwo.SetCustomHeaderByte(2, 0);
+                        packetTwo.Text = stringTwo;
 
                         server.SendPackets(new Packet[] { packetOne, packetTwo });
 
                         StringPacket packetThree = new StringPacket();
-                        packetThree.SetData(PacketConstructor.StringToBytes("A completely unrelated string packet"));
                         packetThree.SetCustomHeaderByte(3, 0);
+                        packetThree.Text = "A completely unrelated string packet";
                         server.SendPacket(packetThree);
 
                         break;
@@ -84,7 +84,7 @@ namespace AkiyamaIPC.TestsNF
                         int @int = int.Parse(intStr);
                         using (IntPacket ip = new IntPacket())
                         {
-                            ip.SetData(PacketConstructor.Int32ToBytes(@int));
+                            ip.Value = @int;
                             server.SendPacket(ip);
                         }
                         break;
@@ -111,7 +111,7 @@ namespace AkiyamaIPC.TestsNF
             }
             else if (pt == PacketType.TEST_PACKET)
             {
-                Console.WriteLine($"[CLIENT] Test packet - no output");
+                Console.WriteLine($"[CLIENT] Test packet - String: {((TestPacket)packet).Text}, Int: {((TestPacket)packet).ANumber}");
             }
 
         }
@@ -134,7 +134,7 @@ namespace AkiyamaIPC.TestsNF
             }
             else if (pt == PacketType.TEST_PACKET)
             {
-                Console.WriteLine($"[SERVER] Test packet - no output");
+                Console.WriteLine($"[SERVER] Test packet - String: {((TestPacket)packet).Text}, Int: {((TestPacket)packet).ANumber}");
             }
 
         }

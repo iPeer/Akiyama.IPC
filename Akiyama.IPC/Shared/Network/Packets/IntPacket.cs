@@ -4,7 +4,7 @@
     {
 
 
-        public int Value = 0;
+        public int Value { get; set; }
 
         public override int ID { get; } = (int)PacketType.INT;
 
@@ -13,6 +13,10 @@
             this.Value = PacketConstructor.BytesToInt32(this.Data);
         }
 
+        public override void Prepare()
+        {
+            this.SetData(PacketConstructor.Int32ToBytes(this.Value));
+        }
 
     }
 }
