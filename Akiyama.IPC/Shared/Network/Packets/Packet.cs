@@ -12,10 +12,12 @@ namespace Akiyama.IPC.Shared.Network.Packets
 
         private bool _disposed;
 
+        public static readonly int MAX_HEADER_SIZE = 20;
+
         public abstract int ID { get; }
 
         public byte[] Data { get; private set; } = Array.Empty<byte>(); // BF-08-02-2024: Prevent Data from defaulting to null in packets that don't pass any data
-        public byte[] Header { get; private set; }
+        public byte[] Header { get; private set; } = new byte[MAX_HEADER_SIZE];
         public int HeaderLength => this.Header.Length;
         public int DataLength => this.Data.Length;
         public int TotalLength => this.Data.Length + this.Header.Length;
@@ -66,12 +68,57 @@ namespace Akiyama.IPC.Shared.Network.Packets
             this.Header = header;
         }
 
+        // TODO: docstring
+        public void SetCustomHeaderByte(byte value, int offset)
+        {
+            int realOffset = sizeof(int) + offset;
+            if (offset < 0 || realOffset >= MAX_HEADER_SIZE - 4) { throw new ArgumentOutOfRangeException("offset"); }
+            this.Header[realOffset] = value;
+        }
+
+        // TODO: docstring
+        public void SetCustomHeaderBytes(byte[] data, int offset)
+        {
+            if (data == null) { throw new ArgumentNullException("data"); }
+            if (data.Length == 0) { return; }
+            int realOffset = sizeof(int) + offset;
+            if (offset < 0 || realOffset + data.Length >= MAX_HEADER_SIZE - 4) { throw new ArgumentException("Supplied data falls outside of available space.", "data"); }
+            Array.Copy(data, 0, this.Header, realOffset, data.Length);
+        }
+
+        // TODO: docstring
+        public byte GetCustomHeaderByte(int offset)
+        {
+            int realOffset = offset + 4;
+            if (offset < 0 || realOffset >= MAX_HEADER_SIZE - 4) { throw new ArgumentOutOfRangeException("offset"); }
+            return this.Header[realOffset];
+        }
+
+        // TODO: docstring
+        public byte[] GetCustomHeaderBytes(int offset, int length)
+        {
+            byte[] buffer = new byte[length];
+            this.GetCustomHeaderBytes(buffer, offset);
+            return buffer;
+        }
+
+        // TODO: docstring
+        public void GetCustomHeaderBytes(byte[] buffer, int offset)
+        {
+            if (buffer == null) { throw new ArgumentNullException("buffer"); }
+            if (buffer.Length == 0) { throw new InvalidOperationException("Cannot read into 0-length buffer"); }
+            int realOffset = offset + 4;
+            if (offset < 0 || realOffset + buffer.Length >= MAX_HEADER_SIZE - 4) { throw new ArgumentException("Supplied buffer falls outside of available space.", "buffer"); }
+            Array.Copy(this.Header, realOffset, buffer, 0, buffer.Length);
+        }
+
         public void UpdateHeader()
         {
             /*
              * CURRENT HEADER STRUCTURE:
-             * [Bytes 0-4]: int32 indicating the TYPE of this packet
-             * [Bytes 5-8]: int32 indicating the LENGTH of the DATA in this packet
+             * [Bytes 0-3]: int32 indicating the TYPE of this packet
+             * [Bytes 4-15]: Customisable header data that the user can set to convey additional data
+             * [Bytes 16-19]: int32 indicating the LENGTH of the DATA in this packet
              */
             int _dLen = this.Data.Length;
             byte[] type = BitConverter.GetBytes(this.ID);
@@ -84,9 +131,12 @@ namespace Akiyama.IPC.Shared.Network.Packets
             }
 
 
-            byte[] header = new byte[dLen.Length + type.Length];
+            byte[] header = new byte[MAX_HEADER_SIZE];
+            // Copy the ID bytes to the START of the packet
             Array.Copy(type, 0, header, 0, type.Length);
-            Array.Copy(dLen, 0, header, 4, dLen.Length);
+            // Copy the length bytes to the END of the packet
+            // "- 5" since the Length is 1-indexed, where actual entries are 0-indexed.
+            Array.Copy(dLen, 0, header, header.Length - 4, dLen.Length);
 
             this.SetHeader(header);
         }

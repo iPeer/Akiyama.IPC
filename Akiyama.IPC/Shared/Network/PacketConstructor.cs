@@ -29,7 +29,8 @@ namespace Akiyama.IPC.Shared.Network
             if (stream.CanSeek && stream.Position != 0) { stream.Seek(0, SeekOrigin.Begin); }
             byte[] idBytes = new byte[4];
             stream.Read(idBytes, 0, idBytes.Length);
-
+            byte[] _ = new byte[Packet.MAX_HEADER_SIZE - (sizeof(int) * 2)]; // Skip over the "customisable" bytes of the header
+            stream.Read(_, 0, _.Length);
             byte[] dataLen = new byte[4];
             stream.Read(dataLen, 0, dataLen.Length);
 
