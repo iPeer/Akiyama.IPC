@@ -131,7 +131,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
             }
 
 
-            byte[] header = new byte[MAX_HEADER_SIZE];
+            byte[] header = this.Header;
             // Copy the ID bytes to the START of the packet
             Array.Copy(type, 0, header, 0, type.Length);
             // Copy the length bytes to the END of the packet

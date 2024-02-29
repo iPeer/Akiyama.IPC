@@ -1,4 +1,5 @@
-﻿using Akiyama.IPC.Shared.Network.Packets;
+﻿using Akiyama.IPC.Shared.Network;
+using Akiyama.IPC.Shared.Network.Packets;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
@@ -12,6 +13,26 @@ namespace UnitTests.NF
         {
             get { return this._testContext; }
             set { this._testContext = value; }
+        }
+
+
+        [TestMethod]
+        public void TestPacketSingleHeaderCustomDataClobberFix()
+        {
+            Random rand = new Random();
+            int index = rand.Next(11);
+            Packet test = new TestPacket();
+            byte _byte = (byte)rand.Next(256);
+            TestContext.WriteLine($"Byte {_byte}, written at index {index}");
+            test.SetCustomHeaderByte(_byte, index);
+            TestContext.WriteLine($"0x{string.Join(", 0x", test.Header)}");
+            test.SetData(PacketConstructor.StringToBytes("test"));
+            byte r = test.GetCustomHeaderByte(index);
+            TestContext.WriteLine($"Recv: 0x{r}");
+            TestContext.WriteLine($"0x{string.Join(", 0x", test.Header)}");
+            Assert.AreEqual(_byte, r);
+            // No assertion needed, an exception will fail the test.
+
         }
 
         [TestMethod]
