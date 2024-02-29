@@ -82,7 +82,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
             if (data == null) { throw new ArgumentNullException("data"); }
             if (data.Length == 0) { return; }
             int realOffset = sizeof(int) + offset;
-            if (offset < 0 || realOffset + data.Length >= MAX_HEADER_SIZE - 4) { throw new ArgumentException("Supplied data falls outside of available space.", "data"); }
+            if (offset < 0 || realOffset + (data.Length - 1) >= MAX_HEADER_SIZE - 4) { throw new ArgumentException("Supplied data falls outside of available space.", "data"); }
             Array.Copy(data, 0, this.Header, realOffset, data.Length);
         }
 
@@ -108,7 +108,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
             if (buffer == null) { throw new ArgumentNullException("buffer"); }
             if (buffer.Length == 0) { throw new InvalidOperationException("Cannot read into 0-length buffer"); }
             int realOffset = offset + 4;
-            if (offset < 0 || realOffset + buffer.Length >= MAX_HEADER_SIZE - 4) { throw new ArgumentException("Supplied buffer falls outside of available space.", "buffer"); }
+            if (offset < 0 || realOffset + (buffer.Length - 1) >= MAX_HEADER_SIZE - 4) { throw new ArgumentException("Supplied buffer falls outside of available space.", "buffer"); }
             Array.Copy(this.Header, realOffset, buffer, 0, buffer.Length);
         }
 
