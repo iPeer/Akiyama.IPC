@@ -107,7 +107,7 @@ namespace AkiyamaIPC.TestsNF
             }
             else if (pt == PacketType.INT)
             {
-                Console.WriteLine($"[CLIENT] Int packet, got value: {((IntPacket)packet).NumberValue}");
+                Console.WriteLine($"[CLIENT] Int packet, got value: {((IntPacket)packet).Value}");
             }
             else if (pt == PacketType.TEST_PACKET)
             {
@@ -130,7 +130,7 @@ namespace AkiyamaIPC.TestsNF
             }
             else if (pt == PacketType.INT)
             {
-                Console.WriteLine($"[SERVER] Int packet, got value: {((IntPacket)packet).NumberValue}");
+                Console.WriteLine($"[SERVER] Int packet, got value: {((IntPacket)packet).Value}");
             }
             else if (pt == PacketType.TEST_PACKET)
             {
