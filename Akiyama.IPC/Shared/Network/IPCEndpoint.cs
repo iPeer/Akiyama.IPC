@@ -41,6 +41,8 @@ namespace Akiyama.IPC.Shared.Network
 
         private CancellationTokenSource pipeDrainCancellationToken = new CancellationTokenSource();
 
+        public bool TerminateOnDisconnect { get; set; } = false;
+
         /* EVENTS */
 
         public event EventHandler<EventArgs> ConnectionsEstablished;
@@ -200,9 +202,6 @@ namespace Akiyama.IPC.Shared.Network
         {
             while (this.IsRunning && !this.IsShuttingDown)
             {
-                Thread.Sleep(500);                                     // BF 29-02-2024: Introduce small delay before (re)starting the thread here to prevent
-                if (!this.IsRunning || this.IsShuttingDown) { break; } // race conditions in configurations that request clients disconnect with special packets
-                this.CleanupStreams();
                 this.Create();
                 if (this.IsServer)
                 {
@@ -257,6 +256,17 @@ namespace Akiyama.IPC.Shared.Network
                 // If we exited the loop, the client has disconnected, reset and wait for another
                 this.OnEndpointDisconnected(new EventArgs());
                 this.CompletedConnections = false;
+                this.CleanupStreams();
+                if (this.TerminateOnDisconnect)
+                {
+                    this.IsRunning = false;
+                    this.IsShuttingDown = true;
+                }
+                else
+                {
+                    Thread.Sleep(500);                                     // BF 29-02-2024: Introduce small delay before (re)starting the thread here to prevent
+                    if (!this.IsRunning || this.IsShuttingDown) { break; } // race conditions in configurations that request clients disconnect with special packets
+                }
             }
         }
 
