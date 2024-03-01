@@ -3,6 +3,7 @@ using Akiyama.IPC.Shared.Network.Packets;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.IO.Pipes;
 using System.Linq;
 using System.Threading;
@@ -207,7 +208,13 @@ namespace Akiyama.IPC.Shared.Network
                 if (this.IsServer)
                 {
                     try { this.OUT_STREAM.WaitForConnection(); }
-                    catch { if (!this.IsShuttingDown) { continue; }; break; }
+                    catch (Exception e) {
+                        if (this.IsShuttingDown && (e is IOException || e is ObjectDisposedException))
+                        {
+                            break;
+                        }
+                        throw;
+                    }
                     this.Log("Server has received client connection!");
                     // If we reach here, a client has connected.
 
