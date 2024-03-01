@@ -24,12 +24,14 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// The ID of this Packet.
         /// </summary>
         public abstract int ID { get; }
-
         /// <summary>
-        /// The data (payload) of this Packet.
-        /// <br/><br/><b>Note</b>: Data should not be directly written to this Property. <see cref="Packet.SetData(byte[])"/> should be used for that instead.
+        /// The payload of this Packet.
+        /// <br/><br/><b>Note</b>: Data should not be directly written to this Property. <see cref="Packet.SetPayload(byte[])"/> should be used for that instead.
         /// </summary>
-        public byte[] Data { get; private set; } = Array.Empty<byte>(); // BF-08-02-2024: Prevent Data from defaulting to null in packets that don't pass any data
+        public byte[] Payload { get; private set; } = Array.Empty<byte>(); // BF-08-02-2024: Prevent Data from defaulting to null in packets that don't pass any data
+        /// <inheritdoc cref="Payload"/>
+        [Obsolete("This Property is deprecated and will be removed in a future update. Use Payload instead.")]
+        public byte[] Data { get { return this.Payload; } }
         /// <summary>
         /// The Header bytes for this Packet.
         /// <br/><br/><b>Note</b>: Modifying this value directly should be avoided. See <see cref="SetCustomHeaderByte(byte, int)"/> and <see cref="SetCustomHeaderBytes(byte[], int)"/> instead.
@@ -40,15 +42,20 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// </summary>
         public int HeaderLength => this.Header.Length;
         /// <summary>
-        /// Returns the length this Packet's <see cref="Data"/> (payload).
+        /// Returns the length this Packet's <see cref="Payload"/> (payload).
         /// </summary>
-        public int DataLength => this.Data.Length;
+        [Obsolete("This Property is deprecated and will be removed in a future update. Use PayloadLength instead")]
+        public int DataLength => this.Payload.Length;
         /// <summary>
-        /// Returns the combined length of this Packet's header and data.
+        /// Returns the length this Packet's <see cref="Payload"/> (payload).
         /// </summary>
-        public int TotalLength => this.Data.Length + this.Header.Length;
+        public int PayloadLength => this.Payload.Length;
         /// <summary>
-        /// If <b>true</b>, calling <see cref="SetData(byte[])"/> will not automatically update the packet's header, requiring manual calls to <see cref="UpdateHeader()"/> instead.
+        /// Returns the combined length of this Packet's header and payload.
+        /// </summary>
+        public int TotalLength => this.Payload.Length + this.Header.Length;
+        /// <summary>
+        /// If <b>true</b>, calling <see cref="SetPayload(byte[])"/> will not automatically update the packet's header, requiring manual calls to <see cref="UpdateHeader()"/> instead.
         /// <br/>This Property can be configured via <see cref="SetAutomaticHeaderUpdates(bool)"/>.
         /// </summary>
         public bool AutomaticHeaderUpdatesDisabled { get; private set; }
@@ -61,38 +68,41 @@ namespace Akiyama.IPC.Shared.Network.Packets
         public bool AutoDispose { get; private set; } = true;
 
         /// <summary>
-        /// Returns the maximum supported data (payload) length for this particular Packet.
+        /// Returns the maximum supported payload length for this particular Packet.
         /// <br />This is set via the class' constructor, or <see cref="SetMaxLength(int)"/>.
         /// </summary>
-        public int MaxDataLength { get; private set; } = int.MaxValue;
+        public int MaxPayloadLength { get; private set; } = int.MaxValue;
+        /// <inheritdoc cref="MaxPayloadLength"/>
+        [Obsolete("This Property is deprecated and will be removed in a future update. Use MaxPayloadLength instead.")]
+        public int MaxDataLength {  get { return this.MaxPayloadLength; } }
 
         /// <summary>
-        /// Create a new instance of this <see cref="Packet"/> with a pre-defined <see cref="Data"/>.
+        /// Create a new instance of this <see cref="Packet"/> with a pre-defined <see cref="Payload"/>.
         /// </summary>
         /// <param name="data">The data to initialise this packet with.</param>
-        /// <param name="maxDataLength">The maximum supported data length for this packet.</param>
+        /// <param name="maxPayloadLength">The maximum supported data length for this packet.</param>
         /// <param name="autoDispose">Should this packet be automatically disposed after it is sent to the opposing endpoint?</param>
-        public Packet(byte[] data, int maxDataLength = int.MaxValue, bool autoDispose = true)
+        public Packet(byte[] data, int maxPayloadLength = int.MaxValue, bool autoDispose = true)
         {
-            this.MaxDataLength = maxDataLength;
+            this.MaxPayloadLength = maxPayloadLength;
             this.AutoDispose = autoDispose;
-            this.SetData(data);
+            this.SetPayload(data);
         }
         /// <summary>
-        /// Create a new instance of this <see cref="Packet"/> with no pre-defined <see cref="Data"/>.
+        /// Create a new instance of this <see cref="Packet"/> with no pre-defined <see cref="Payload"/>.
         /// </summary>
-        /// <param name="maxDataLength">The maximum supported data length for this packet.</param>
+        /// <param name="maxPayloadLength">The maximum supported data length for this packet.</param>
         /// <param name="autoDispose"><see langword="true"/> if this Packet should be automatically disposed after being sent, otherwise <see langword="false"/>.</param>
-        public Packet(int maxDataLength = int.MaxValue, bool autoDispose = true)
+        public Packet(int maxPayloadLength = int.MaxValue, bool autoDispose = true)
         {
-            this.MaxDataLength = maxDataLength;
+            this.MaxPayloadLength = maxPayloadLength;
             this.AutoDispose = autoDispose;
             this.UpdateHeader(); // BF-28-02-2024: Ensure headers are updated on new packets to prevent their values being nulls
         }
 
         /// <summary>
         /// When overridden, allows the packet to set up data after being received, so that it may be accessed later, for example through Properties.
-        /// <br />If not overridden, the packet will not be populated, however its raw data will still be available via <see cref="Data"/>.
+        /// <br />If not overridden, the packet will not be populated, however its raw data will still be available via <see cref="Payload"/>.
         /// <br />For examples of this method's usage, see <seealso href="https://github.com/iPeer/Akiyama.IPC/blob/master/Akiyama.IPC/Shared/Network/Packets/TestPacket.cs"/>.
         /// <br /><br />
         /// <b>This method is called immediately after the packet is received.</b>
@@ -100,35 +110,37 @@ namespace Akiyama.IPC.Shared.Network.Packets
         public virtual void Populate() { }
 
         /// <summary>
-        /// When overridden, allows the packet to prepare data before being sent, such as setting its data to be set using its internal properties.
-        /// <br />If not overridden, the packet will not prepare anything before transmission, and any data not already added to <see cref="Data"/> is lost.
+        /// When overridden, allows the packet to prepare data before being sent, such as setting its payload to be set using its internal properties.
+        /// <br />If not overridden, the packet will not prepare anything before transmission, and any data not already added to <see cref="Payload"/> is lost.
         /// <br />For examples of this method's usage, see <seealso href="https://github.com/iPeer/Akiyama.IPC/blob/master/Akiyama.IPC/Shared/Network/Packets/TestPacket.cs"/>.
         /// <br /><br />
         /// <b>This method is called immediately before the packet is sent.</b>
         /// <br />
-        /// <br /><b>Note</b>: When setting the packet's data, it should be done via <see cref="SetData(byte[])"/>, as assigning it directly to the <see cref="Data"/> property will not update the packet's header without <see cref="UpdateHeader()"/> being called.
-        /// <br />If <c><see cref="AutomaticHeaderUpdatesDisabled"/></c> is set to <b>true</b>, <see cref="SetData(byte[])"/> <b>will not automatically update the packet's headers</b> and the user <b>must</b> call <see cref="UpdateHeader()"/> manually.
-        /// <br /><br /><b>WARNING</b>: This method can be destructive to data already contained within <see cref="Data"/> if the overriding method is not written in a way that preserves it.
+        /// <br /><b>Note</b>: When setting the packet's data, it should be done via <see cref="SetPayload(byte[])"/>, as assigning it directly to the <see cref="Payload"/> property will not update the packet's header without <see cref="UpdateHeader()"/> being called.
+        /// <br />If <c><see cref="AutomaticHeaderUpdatesDisabled"/></c> is set to <b>true</b>, <see cref="SetPayload(byte[])"/> <b>will not automatically update the packet's headers</b> and the user <b>must</b> call <see cref="UpdateHeader()"/> manually.
+        /// <br /><br /><b>WARNING</b>: This method can be destructive to data already contained within <see cref="Payload"/> if the overriding method is not written in a way that preserves it.
         /// </summary>
         public virtual void Prepare() { }
 
         /// <summary>
-        /// Sets the data for this packet.
-        /// <br/><b>Note</b>: While there is no specifically coded length limit, the packet header uses 4 bytes for Data length. Thus the length of the data is limited to <see cref="int.MaxValue"/>.
-        /// <br />Also note that larger packets will take longer to send, take longer to be read, and will use more RAM (on both ends) while being processed. Consider splitting larger packets to make them more efficient.
-        /// <br/><br/>Throws <see cref="InvalidOperationException"/> if the length of <paramref name="data"/> exceeds this Packet's <see cref="MaxDataLength"/>.
+        /// Sets the payload for this packet.
+        /// <br /><b>Note</b>: Larger packets will take longer to send, take longer to be read, and will use more RAM (on both ends) while being processed. Consider splitting larger packets to make them more efficient.
+        /// <br/><br/>Throws <see cref="InvalidOperationException"/> if the length of <paramref name="data"/> exceeds this Packet's <see cref="MaxPayloadLength"/>.
         /// </summary>
         /// <param name="data"></param>
         /// <exception cref="InvalidOperationException"></exception>"
-        public void SetData(byte[] data)
+        public void SetPayload(byte[] data)
         {
-            if (data.Length > this.MaxDataLength)
+            if (data.Length > this.MaxPayloadLength)
             {
-                throw new InvalidOperationException($"Payload is too big for this packet's configuration. Max length is {this.MaxDataLength}, but given data was {data.Length}.");
+                throw new InvalidOperationException($"Payload is too big for this packet's configuration. Max length is {this.MaxPayloadLength}, but given data was {data.Length}.");
             }
-            this.Data = data;
+            this.Payload = data;
             if (!this.AutomaticHeaderUpdatesDisabled) { this.UpdateHeader(); }
         }
+        /// <inheritdoc cref="SetPayload(byte[])"/>
+        [Obsolete("This method is deprecated and will be removed in a future update. Use SetPayload(byte[]) instead.")]
+        public void SetData(byte[] data) => SetPayload(data);
 
         /// <summary>
         /// Sets the Header for this packet. <b>This function should only be used internally.</b>
@@ -231,7 +243,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
              * [Bytes 4-15]: Customisable header data that the user can set to convey additional data
              * [Bytes 16-19]: int32 indicating the LENGTH of the DATA in this packet
              */
-            int _dLen = this.Data.Length;
+            int _dLen = this.Payload.Length;
             byte[] type = BitConverter.GetBytes(this.ID);
             byte[] dLen = BitConverter.GetBytes(_dLen);
 
@@ -283,8 +295,8 @@ namespace Akiyama.IPC.Shared.Network.Packets
         public void SetMaxLength(int length)
         {
             if (length < 0) { throw new ArgumentOutOfRangeException("length"); }
-            if (this.DataLength > length) { throw new InvalidOperationException("The packet's current exceeds 'length'."); }
-            this.MaxDataLength = length;
+            if (this.PayloadLength > length) { throw new InvalidOperationException("The packet's current payload length exceeds 'length'."); }
+            this.MaxPayloadLength = length;
         }
 
         /// <summary>
@@ -302,7 +314,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
             if (disposing)
             {
                 this.Header = null;
-                this.Data = null;
+                this.Payload = null;
             }
             this._disposed = true;
         }

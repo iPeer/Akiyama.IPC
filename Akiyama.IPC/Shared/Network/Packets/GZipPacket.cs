@@ -18,12 +18,12 @@ namespace Akiyama.IPC.Shared.Network.Packets
 
         public override void Populate()
         {
-            this.DataBytes = this.Decompress(this.Data);
+            this.DataBytes = this.Decompress(this.Payload);
         }
 
         public override void Prepare()
         {
-            this.SetData(this.Compress(this.DataBytes));
+            this.SetPayload(this.Compress(this.DataBytes));
         }
 
         private byte[] Compress(byte[] data)

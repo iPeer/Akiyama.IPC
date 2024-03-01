@@ -8,12 +8,12 @@
 
         public override void Populate()
         {
-            this.Value = PacketConstructor.BytesToUInt16(this.Data);
+            this.Value = PacketConstructor.BytesToUInt16(this.Payload);
         }
 
         public override void Prepare()
         {
-            this.SetData(PacketConstructor.UInt16ToBytes(this.Value));
+            this.SetPayload(PacketConstructor.UInt16ToBytes(this.Value));
         }
     }
 }

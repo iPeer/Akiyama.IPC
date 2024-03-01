@@ -26,7 +26,7 @@ namespace UnitTests.NF
             TestContext.WriteLine($"Byte {_byte}, written at index {index}");
             test.SetCustomHeaderByte(_byte, index);
             TestContext.WriteLine($"0x{string.Join(", 0x", test.Header)}");
-            test.SetData(PacketConstructor.StringToBytes("test"));
+            test.SetPayload(PacketConstructor.StringToBytes("test"));
             byte r = test.GetCustomHeaderByte(index);
             TestContext.WriteLine($"Recv: 0x{r}");
             TestContext.WriteLine($"0x{string.Join(", 0x", test.Header)}");

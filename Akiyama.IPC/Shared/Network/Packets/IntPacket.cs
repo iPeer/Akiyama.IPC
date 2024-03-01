@@ -10,12 +10,12 @@
 
         public override void Populate()
         {
-            this.Value = PacketConstructor.BytesToInt32(this.Data);
+            this.Value = PacketConstructor.BytesToInt32(this.Payload);
         }
 
         public override void Prepare()
         {
-            this.SetData(PacketConstructor.Int32ToBytes(this.Value));
+            this.SetPayload(PacketConstructor.Int32ToBytes(this.Value));
         }
 
     }

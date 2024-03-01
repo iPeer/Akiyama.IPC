@@ -44,7 +44,7 @@ namespace Akiyama.IPC.Shared.Network
             stream.Read(pData, 0, pData.Length);
             packet.SetAutomaticHeaderUpdates(false);
 
-            packet.SetData(pData);
+            packet.SetPayload(pData);
 
             packet.SetAutomaticHeaderUpdates(true);
             packet.UpdateHeader();

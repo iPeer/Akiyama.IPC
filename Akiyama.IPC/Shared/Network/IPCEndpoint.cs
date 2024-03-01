@@ -182,7 +182,7 @@ namespace Akiyama.IPC.Shared.Network
             byte[] pBytes = new byte[packet.TotalLength + 1];
             pBytes[0] = this.PacketConstructor.PRE_PACKET_BYTE;
             Array.Copy(packet.Header, 0, pBytes, 1, packet.HeaderLength);
-            Array.Copy(packet.Data, 0, pBytes, packet.HeaderLength + 1, packet.DataLength);
+            Array.Copy(packet.Payload, 0, pBytes, packet.HeaderLength + 1, packet.PayloadLength);
             if (packet.AutoDispose)
             {
                 packet.Dispose();

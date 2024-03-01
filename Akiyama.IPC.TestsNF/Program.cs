@@ -98,7 +98,7 @@ namespace AkiyamaIPC.TestsNF
             Packet packet = eventArgs.Packet;
             Console.WriteLine($"[CLIENT] Packet received: {packet.TotalLength} bytes");
             Console.WriteLine($"[CLIENT] Header: 0x{string.Join(", 0x", packet.Header)}");
-            Console.WriteLine($"[CLIENT] Data: 0x{string.Join(", 0x", packet.Data)}");
+            Console.WriteLine($"[CLIENT] Data: 0x{string.Join(", 0x", packet.Payload)}");
 
             PacketType pt = (PacketType)packet.ID;
             if (pt == PacketType.STRING)
@@ -121,7 +121,7 @@ namespace AkiyamaIPC.TestsNF
             Packet packet = eventArgs.Packet;
             Console.WriteLine($"[SERVER] Packet received: {packet.TotalLength} bytes");
             Console.WriteLine($"[SERVER] Header: 0x{string.Join(", 0x", packet.Header)}");
-            Console.WriteLine($"[SERVER] Data: 0x{string.Join(", 0x", packet.Data)}");
+            Console.WriteLine($"[SERVER] Data: 0x{string.Join(", 0x", packet.Payload)}");
 
             PacketType pt = (PacketType)packet.ID;
             if (pt == PacketType.STRING)
