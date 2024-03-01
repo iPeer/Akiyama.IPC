@@ -43,6 +43,15 @@ namespace Akiyama.IPC.Shared.Network
         private CancellationTokenSource pipeDrainCancellationToken = new CancellationTokenSource();
 
         public bool TerminateOnDisconnect { get; set; } = false;
+        private bool _runAsBrackgroundThread = false;
+        public bool RunAsBackgroundThread
+        {
+            get { return this._runAsBrackgroundThread; }
+            set { 
+                this._runAsBrackgroundThread = value;
+                if (this.IsRunning) { this.Thread.IsBackground = value; }
+            }
+        }
 
         /* EVENTS */
 
@@ -103,8 +112,8 @@ namespace Akiyama.IPC.Shared.Network
         {
             this.Thread = new Thread(new ThreadStart(this.RunThread))
             {
-                Name = $"Akiyama.IPC PipeEndPoint Thread: {this.Name}",
-                IsBackground = false
+                Name = $"Akiyama.IPC IPCEndPoint Thread: {this.Name}",
+                IsBackground = this.RunAsBackgroundThread
             };
             this.IsRunning = true;
             this.Thread.Start();
