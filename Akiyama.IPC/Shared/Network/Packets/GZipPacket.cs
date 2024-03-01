@@ -41,15 +41,19 @@ namespace Akiyama.IPC.Shared.Network.Packets
 
         protected byte[] Decompress(byte[] data)
         {
-            using (MemoryStream ms = new MemoryStream())
+
+            using (MemoryStream cs = new MemoryStream(data))
             {
-                using (GZipStream zip = new GZipStream(ms, CompressionMode.Decompress))
+                using (GZipStream zip = new GZipStream(cs, CompressionMode.Decompress))
                 {
-                    zip.Write(data,0, data.Length);
-                    zip.Close();
-                    return ms.ToArray();
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        zip.CopyTo(ms);
+                        return ms.ToArray();
+                    }
                 }
             }
+
         }
 
     }
