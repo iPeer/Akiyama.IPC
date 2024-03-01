@@ -48,6 +48,7 @@
     <Compile Include="Shared\Exceptions\UnknownPacketException.cs" />
     <Compile Include="Shared\Network\IPCEndpoint.cs" />
     <Compile Include="Shared\Network\PacketConstructor.cs" />
+    <Compile Include="Shared\Network\Packets\GenericDataPacket.cs" />
     <Compile Include="Shared\Network\Packets\GZipPacket.cs" />
     <Compile Include="Shared\Network\Packets\IntPacket.cs" />
     <Compile Include="Shared\Network\Packets\LongPacket.cs" />
