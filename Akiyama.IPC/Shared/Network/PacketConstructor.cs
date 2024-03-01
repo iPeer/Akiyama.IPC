@@ -243,6 +243,44 @@ namespace Akiyama.IPC.Shared.Network
         }
 
         /// <summary>
+        /// Converts the given <paramref name="bool"/> into its representative byte.
+        /// </summary>
+        /// <param name="bool">The <see cref="Boolean"/> to convert.</param>
+        /// <returns>A byte array consisting of the byte used to represent <paramref name="bool"/>.</returns>
+        public static byte[] BoolToBytes(bool @bool)
+        {
+            return new byte[] { (byte)(@bool ? 1 : 0) };
+        }
+        /// <summary>
+        /// Converts the given <paramref name="bool"/> into its representative byte.
+        /// </summary>
+        /// <param name="bool">The <see cref="Boolean"/> to convert.</param>
+        /// <returns>A byte that represents the state of <paramref name="bool"/>.</returns>
+        public static byte BoolToByte(bool @bool) => BoolToBytes(@bool)[0];
+        /// <summary>
+        /// Converts the given <paramref name="bytes"/> into the <see cref="Boolean"/> it represents. Any value other than 0 is considered to be <see langword="true"/>.
+        /// <br />Throws <see cref="ArgumentOutOfRangeException"/> if <paramref name="offset"/> is greater than the size of <paramref name="bytes"/>, or if <paramref name="offset"/> is less than 0.
+        /// </summary>
+        /// <param name="bytes">The bytes to convert.</param>
+        /// <param name="offset">The offset for which byte to convert.</param>
+        /// <returns>A <see cref="Boolean"/> constructed from the byte in <paramref name="bytes"/> at the offset <paramref name="offset"/>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public static bool BytesToBool(byte[] bytes, int offset = 0)
+        {
+            if (offset < 0 || bytes.Length < (offset + 1)) { throw new ArgumentOutOfRangeException("offset"); }
+            return bytes[offset] != 0;
+        }
+        /// <summary>
+        /// Converts the given <paramref name="byte"/> into the <see cref="Boolean"/> it represents. Any value other than 0 is considered to be <see langword="true"/>.
+        /// </summary>
+        /// <param name="byte">The byte to convert.</param>
+        /// <returns>A <see cref="Boolean"/> constructed from the byte <paramref name="byte"/>.</returns>
+        public static bool ByteToBool(byte @byte)
+        {
+            return @byte != 0;
+        }
+
+        /// <summary>
         /// Returns the bytes that represent the given string. This method uses UTF-8 encoding by default. To specify encoding, see <see cref="StringToBytes(string, Encoding)"/>.
         /// </summary>
         /// <param name="string">The string to convert</param>
