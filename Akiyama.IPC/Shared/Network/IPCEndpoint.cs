@@ -43,7 +43,7 @@ namespace Akiyama.IPC.Shared.Network
         private CancellationTokenSource pipeDrainCancellationToken = new CancellationTokenSource();
 
         public bool TerminateOnDisconnect { get; set; } = false;
-        private bool _runAsBrackgroundThread = false;
+        private bool _runAsBrackgroundThread = true;
         public bool RunAsBackgroundThread
         {
             get { return this._runAsBrackgroundThread; }
@@ -126,10 +126,10 @@ namespace Akiyama.IPC.Shared.Network
             if (this.CompletedConnections)
             {
                 this.pipeDrainCancellationToken.Cancel();
-                this.OUT_STREAM.Disconnect();
-                this.IN_STREAM.Dispose();
+                this.OUT_STREAM?.Disconnect();
+                this.IN_STREAM?.Dispose();
             }
-            this.OUT_STREAM.Dispose();
+            this.OUT_STREAM?.Dispose();
         }
 
         private void SendBytes(byte[] bytes)
