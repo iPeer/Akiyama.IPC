@@ -117,8 +117,9 @@ namespace Akiyama.IPC.Shared.Network
             {
                 this.pipeDrainCancellationToken.Cancel();
                 this.OUT_STREAM.Disconnect();
-                this.IN_STREAM.Close();
+                this.IN_STREAM.Dispose();
             }
+            this.OUT_STREAM.Dispose();
         }
 
         private void SendBytes(byte[] bytes)
