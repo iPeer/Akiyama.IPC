@@ -26,7 +26,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
             this.SetPayload(this.Compress(this.DataBytes));
         }
 
-        private byte[] Compress(byte[] data)
+        protected byte[] Compress(byte[] data)
         {
             using (MemoryStream ms = new MemoryStream())
             {
@@ -39,7 +39,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
             }
         }
 
-        private byte[] Decompress(byte[] data)
+        protected byte[] Decompress(byte[] data)
         {
             using (MemoryStream ms = new MemoryStream())
             {
