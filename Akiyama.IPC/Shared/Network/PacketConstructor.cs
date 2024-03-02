@@ -11,13 +11,20 @@ namespace Akiyama.IPC.Shared.Network
     public class PacketConstructor
     {
 
-        PacketTyper packetTyper;
+        /// <summary>
+        /// See the instance of the specific <see cref="PacketTyper"/> used for this instance.
+        /// </summary>
+        readonly PacketTyper packetTyper;
 
         /// <summary>
         /// The byte that, when received via the IPC streams indicates the start of a data packet.
         /// </summary>
         public const byte PRE_PACKET_BYTE = 0x69;
 
+        /// <summary>
+        /// Creates a new instance of <see cref="PacketConstructor"/> to use in an <see cref="IPCEndpoint"/>.
+        /// </summary>
+        /// <param name="packetTyper">An instance of a <see cref="PacketTyper"/> to use in this constructor.</param>
         public PacketConstructor(PacketTyper packetTyper)
         {
             this.packetTyper = packetTyper;
@@ -41,7 +48,6 @@ namespace Akiyama.IPC.Shared.Network
             int id = BytesToInt32(idBytes);
             int dataLength = BytesToInt32(dataLen);
             Packet packet = this.packetTyper.GetPacketObjectFromId(id) ?? throw new UnknownPacketException(id);
-
             packet.SetCustomHeaderBytes(customData, 0); // BF 29/02/2024: Fix packets losing their custom data after transmission over the socket
 
             byte[] pData = new byte[dataLength];
