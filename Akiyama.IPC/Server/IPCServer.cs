@@ -14,7 +14,7 @@ namespace Akiyama.IPC.Server
         public IPCServer()
         {
 
-            this.Name = this.GenerateNameHash();
+            this.PipeName = this.GenerateNameHash();
             this.PacketConstructor = new PacketConstructor(new DefaultPacketTyper());
             this.IsServer = true;
 
@@ -25,7 +25,7 @@ namespace Akiyama.IPC.Server
         public IPCServer(string pipeName, PacketTyper typer)
         {
             this.PacketConstructor = new PacketConstructor(typer);
-            this.Name = pipeName.Replace(" ", "_");
+            this.PipeName = pipeName.Replace(" ", "_");
             this.IsServer = true;
         }
 
@@ -34,7 +34,7 @@ namespace Akiyama.IPC.Server
 
             this.Thread = new Thread(new ThreadStart(this.RunThread))
             {
-                Name = $"Akiyama.IPC PipeServer Thread: {this.Name}",
+                Name = $"Akiyama.IPC PipeServer Thread: {this.PipeName}",
                 IsBackground = false
             };
             this.IsRunning = true;

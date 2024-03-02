@@ -13,7 +13,7 @@ namespace Akiyama.IPC.Client
         public IPCClient(string pipeName, PacketTyper typer)
         {
             this.PacketConstructor = new PacketConstructor(typer);
-            this.Name = pipeName.Replace(" ", "_");
+            this.PipeName = pipeName.Replace(" ", "_");
         }
 
         public override void Start()
@@ -21,7 +21,7 @@ namespace Akiyama.IPC.Client
 
             this.Thread = new Thread(new ThreadStart(this.RunThread))
             {
-                Name = $"Akiyama.IPC PipeClient Thread: {this.Name}",
+                Name = $"Akiyama.IPC PipeClient Thread: {this.PipeName}",
                 IsBackground = false
             };
             this.IsRunning = true;
