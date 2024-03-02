@@ -12,7 +12,11 @@ namespace Akiyama.IPC.Shared.Network
     {
 
         PacketTyper packetTyper;
-        internal byte PRE_PACKET_BYTE = 0x69;
+
+        /// <summary>
+        /// The byte that, when received via the IPC streams indicates the start of a data packet.
+        /// </summary>
+        public const byte PRE_PACKET_BYTE = 0x69;
 
         public PacketConstructor(PacketTyper packetTyper)
         {

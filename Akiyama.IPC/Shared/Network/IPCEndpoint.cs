@@ -193,7 +193,7 @@ namespace Akiyama.IPC.Shared.Network
         {
             packet.Prepare();
             byte[] pBytes = new byte[packet.TotalLength + 1];
-            pBytes[0] = this.PacketConstructor.PRE_PACKET_BYTE;
+            pBytes[0] = PacketConstructor.PRE_PACKET_BYTE;
             Array.Copy(packet.Header, 0, pBytes, 1, packet.HeaderLength);
             Array.Copy(packet.Payload, 0, pBytes, packet.HeaderLength + 1, packet.PayloadLength);
             if (packet.AutoDispose)
@@ -261,7 +261,7 @@ namespace Akiyama.IPC.Shared.Network
                 while (this.IN_STREAM.IsConnected && (_byte = this.IN_STREAM.ReadByte()) != -1 && !this.IsShuttingDown && this.IsRunning)
                 {
                     byte rBytes = (byte)_byte; // Just to make things easier
-                    if (rBytes == this.PacketConstructor.PRE_PACKET_BYTE) // If the data starts with this magic byte, we got a packet - Later make this configurable??? (Also yes, I used the funny number)
+                    if (rBytes == PacketConstructor.PRE_PACKET_BYTE) // If the data starts with this magic byte, we got a packet - Later make this configurable??? (Also yes, I used the funny number)
                     {
                         using (Packet packet = this.PacketConstructor.CreateFromStream(this.IN_STREAM))
                         {
