@@ -3,6 +3,10 @@
 packages/*
 */obj/*
 .vs/
+_site/
+docs/
+api/
+index.md
 
 # Prerequisites
 *.d

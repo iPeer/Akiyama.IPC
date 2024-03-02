@@ -1,0 +1,50 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": "**/*.csproj",
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**"
+          ],
+          "src": "./Akiyama.IPC"
+        }
+      ],
+      "dest": "api/",
+      "properties": {
+          "TargetFramework": "netframework472"
+      }
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "exclude": [
+          "_site/**"
+        ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "images/**"
+        ]
+      }
+    ],
+    "output": "_site",
+    "template": [
+      "default",
+      "modern"
+    ],
+    "globalMetadata": {
+      "_appName": "Akiyama.IPC",
+      "_appTitle": "Akiyama.IPC",
+      "_enableSearch": true,
+      "pdf": false
+    }
+  }
+}
