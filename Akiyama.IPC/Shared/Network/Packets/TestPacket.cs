@@ -4,15 +4,24 @@ using System.Text;
 
 namespace Akiyama.IPC.Shared.Network.Packets
 {
+    /// <summary>
+    /// A packet used for testing IPC connectivity.
+    /// <br /><br />This packet implements both <see cref="Packet.Prepare"/> and <see cref="Packet.Populate"/> to automatically process its Properties into/from its payload when send or received respectively.
+    /// <br /><br /><b>Note</b>: This packet should not usually be used in a production environment and should only be used for testing purposes.
+    /// </summary>
     public class TestPacket : Packet
     {
 
         public override int ID { get; } = (int)PacketType.TEST_PACKET;
 
+        /// <summary>
+        /// The test <see cref="string"/> that is sent by or received via this packet.
+        /// </summary>
         public string Text = "This is a test packet";
+        /// <summary>
+        /// The test <see cref="int"/> that is send by or received via this packet.
+        /// </summary>
         public int ANumber = 69;
-
-        public TestPacket() : base() { }
 
         public override void Populate()
         {

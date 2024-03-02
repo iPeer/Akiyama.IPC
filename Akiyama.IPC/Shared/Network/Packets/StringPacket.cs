@@ -2,9 +2,16 @@
 
 namespace Akiyama.IPC.Shared.Network.Packets
 {
+    /// <summary>
+    /// A basic packet used for transferring a single <see cref="string"/> via IPC.
+    /// <br /><br />This packet implements both <see cref="Packet.Prepare"/> and <see cref="Packet.Populate"/> to automatically process its Properties into/from its payload when send or received respectively.
+    /// </summary>
     public class StringPacket : Packet
     {
 
+        /// <summary>
+        /// The <see cref="string"/> that is to be, or was transferred.
+        /// </summary>
         public string Text { get; set; }
 
         public override int ID { get; } = (int)PacketType.STRING;
