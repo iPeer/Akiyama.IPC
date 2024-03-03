@@ -1,4 +1,5 @@
 ﻿using Akiyama.IPC.Shared.Network;
+using Akiyama.IPC.Shared.Network.Packets;
 using Akiyama.IPC.Shared.Typers;
 using System;
 using System.Diagnostics;
@@ -7,6 +8,9 @@ using System.Threading;
 
 namespace Akiyama.IPC.Server
 {
+    /// <summary>
+    /// A wrapper class for an <see cref="IPCEndpoint"/> that behaves as an IPC server.
+    /// </summary>
     public class IPCServer : IPCEndpoint, IDisposable
     {
 
@@ -20,8 +24,17 @@ namespace Akiyama.IPC.Server
 
         }
 
+        /// <summary>
+        /// Constructs an instance of an <see cref="IPCServer"/> using the default <see cref="PacketTyper"/>.
+        /// </summary>
+        /// <param name="pipeName">The pipe/server name this instance will connect to.</param>
         public IPCServer(string pipeName) : this(pipeName, new DefaultPacketTyper()) { }
 
+        /// <summary>
+        /// Constructs an instance of an <see cref="IPCServer"/> using a custom <see cref="PacketTyper"/>.
+        /// </summary>
+        /// <param name="pipeName">The pipe/server name this instance will connect to.</param>
+        /// <param name="typer">An instance of a custom <see cref="PacketTyper"/> that this connection will use for parsing incoming <see cref="Packet"/>s.</param>
         public IPCServer(string pipeName, PacketTyper typer)
         {
             this.PacketConstructor = new PacketConstructor(typer);
@@ -42,6 +55,10 @@ namespace Akiyama.IPC.Server
 
         }
 
+        /// <summary>
+        /// Generates a pseudo-random string for this <see cref="IPCEndpoint"/> to use as its pipe name, if none was provided at creation.
+        /// </summary>
+        /// <returns>A psuedo-random string of characters.</returns>
         public string GenerateNameHash()
         {
             // We can safely use something like MD5 here because collisions do not matter.
