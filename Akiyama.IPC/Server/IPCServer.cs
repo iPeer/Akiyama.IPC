@@ -14,7 +14,10 @@ namespace Akiyama.IPC.Server
     public class IPCServer : IPCEndpoint, IDisposable
     {
 
-
+        /// <summary>
+        /// Constructs an instance of an <see cref="IPCServer"/> using a pseudo-randomly generated name, and the default <see cref="PacketTyper"/>.
+        /// <br />The <see cref="IPCEndpoint.PipeName"/> property can be used to acquire the name after construction.
+        /// </summary>
         public IPCServer()
         {
 
