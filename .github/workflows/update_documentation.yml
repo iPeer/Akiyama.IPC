@@ -8,8 +8,9 @@ on:
         paths:
             - '**.cs'
             - '**.csproj'
-            - 'docfx.json'
-            - 'toc.yml'
+            - 'documentation/docfx.json'
+            - 'documentation/toc.yml'
+            - 'documentation/index.md'
             - '.github/workflows/update_documentation.yml'
         branches:
             - master
@@ -47,7 +48,7 @@ jobs:
 #          run: dotnet restore 'AkiyamaIPC.sln'
 
         - run: dotnet tool update -g docfx
-        - run: docfx ./docfx.json
+        - run: docfx ./documentation/docfx.json
 
         - name: Upload artifact
           uses: actions/upload-pages-artifact@v3

@@ -2,7 +2,7 @@
 {
 
     /// <summary>
-    /// Represents the base class for IPC packets. This class is <see langword="abstract"/>. Test.
+    /// Represents the base class for IPC packets. This class is <see langword="abstract"/>.
     /// </summary>
     public abstract class Packet : IDisposable
     {
