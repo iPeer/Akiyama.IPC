@@ -3,18 +3,13 @@
     {
       "src": [
         {
-          "files": "**/*.csproj",
-          "exclude": [
-            "**/obj/**",
-            "**/bin/**"
-          ],
-          "src": "./Akiyama.IPC"
+          "src": "./Akiyama.IPC/",
+          "files": [
+            "**/*.csproj"
+          ]
         }
       ],
-      "dest": "api/",
-      "properties": {
-          "TargetFramework": "netframework472"
-      }
+      "dest": "api"
     }
   ],
   "build": {
