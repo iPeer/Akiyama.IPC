@@ -11,17 +11,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests.NF", "UnitTests.N
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akiyama.IPC.NET", "Akiyama.IPC.NET\Akiyama.IPC.NET.csproj", "{B9B07997-49B6-4864-A921-48427A32ECB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests.NET", "UnitTests.NET\UnitTests.NET.csproj", "{83CAAD60-A1E1-4D88-AA52-D1ABB369F175}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.NET", "UnitTests.NET\UnitTests.NET.csproj", "{83CAAD60-A1E1-4D88-AA52-D1ABB369F175}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akiyama.IPC.TestsNET", "Akiyama.IPC.TestsNET\Akiyama.IPC.TestsNET.csproj", "{DBF477F3-DEDD-497D-B1F0-DB30130FB68C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{627DEEED-6AC8-4087-861B-69D640A5071D}"
 	ProjectSection(SolutionItems) = preProject
-		docfx.json = docfx.json
-		toc.yml = toc.yml
+		.gitignore = .gitignore
+		documentation\docfx.json = documentation\docfx.json
+		documentation\index.md = documentation\index.md
+		documentation\toc.yml = documentation\toc.yml
+		.github\workflows\update_documentation.yml = .github\workflows\update_documentation.yml
 	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{F598C468-708B-46A0-ADDD-6B01DFDDCA79}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,9 +57,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{F598C468-708B-46A0-ADDD-6B01DFDDCA79} = {627DEEED-6AC8-4087-861B-69D640A5071D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {68D7396E-05BE-4279-B39C-2A17B964E9D2}
