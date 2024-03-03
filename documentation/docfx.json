@@ -17,7 +17,9 @@
     "content": [
       {
         "files": [
-          "**/*.{md,yml}"
+          "**/*.{md,yml}",
+          "toc.yml",
+          "*.md"
         ],
         "exclude": [
           "_site/**"
@@ -27,11 +29,12 @@
     "resource": [
       {
         "files": [
-          "images/**"
+          "images/**",
+          "examples/packet.bin"
         ]
       }
     ],
-    "output": "../_site",
+    "output": "./_site",
     "template": [
       "default",
       "modern"

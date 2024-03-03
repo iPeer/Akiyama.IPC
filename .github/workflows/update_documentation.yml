@@ -10,6 +10,7 @@ on:
             - '**.csproj'
             - 'documentation/docfx.json'
             - 'documentation/toc.yml'
+            - 'documentation/docs/**'
             - 'documentation/index.md'
             - '.github/workflows/update_documentation.yml'
         branches:
@@ -47,14 +48,16 @@ jobs:
 #        - name: Restore Nuget Packages
 #          run: dotnet restore 'AkiyamaIPC.sln'
 
-        - run: dotnet tool update -g docfx
+        - run: |
+            dotnet tool update -g docfx
+            docfx --version
         - run: docfx ./documentation/docfx.json
 
         - name: Upload artifact
           uses: actions/upload-pages-artifact@v3
           with:
             # Upload entire repository
-            path: './_site'
+            path: './documentation/_site'
         - name: Deploy to GitHub Pages
           id: deployment
           uses: actions/deploy-pages@v4

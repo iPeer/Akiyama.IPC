@@ -3,9 +3,8 @@
 packages/*
 */obj/*
 .vs/
-_site/
-docs/
-api/
+documentation/_site/
+documentation/api/
 
 # Prerequisites
 *.d

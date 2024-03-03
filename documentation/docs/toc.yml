@@ -1,0 +1,17 @@
+- name: Get started
+- href: ../index.md
+- href: basic-setup.md
+
+- name: Packet Typers
+  items:
+    - href: what-is-a-packettyper.md
+    - href: custom-packettypers.md
+    
+- name: Packets
+  items:
+    - href: packets-overview.md
+    - href: packets-fundamentals.md
+    - href: ipc-packet-protocol.md
+    - href: creating-custom-packets.md
+
+- href: update-history.md
