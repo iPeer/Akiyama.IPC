@@ -9,6 +9,7 @@ on:
             - '**.cs'
             - '**.csproj'
             - 'docfx.json'
+            - 'toc.yml'
             - '.github/workflows/update_documentation.yml'
         branches:
             - master
