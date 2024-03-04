@@ -83,6 +83,14 @@ namespace Akiyama.IPC.Shared.Network.Packets
         public int MaxDataLength {  get { return this.MaxPayloadLength; } }
 
         /// <summary>
+        /// Creates a new instance of this <see cref="Packet"/> with no predfined restrictions or content.
+        /// </summary>
+        public Packet()
+        {
+            this.Init();
+            this.UpdateHeader();
+        }
+        /// <summary>
         /// Create a new instance of this <see cref="Packet"/> with a pre-defined <see cref="Payload"/>.
         /// </summary>
         /// <param name="data">The data to initialise this packet with.</param>
@@ -90,6 +98,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// <param name="autoDispose">Should this packet be automatically disposed after it is sent to the opposing endpoint?</param>
         public Packet(byte[] data, int maxPayloadLength = int.MaxValue, bool autoDispose = true)
         {
+            this.Init();
             this.MaxPayloadLength = maxPayloadLength;
             this.AutoDispose = autoDispose;
             this.SetPayload(data);
@@ -101,6 +110,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// <param name="autoDispose"><see langword="true"/> if this Packet should be automatically disposed after being sent, otherwise <see langword="false"/>.</param>
         public Packet(int maxPayloadLength = int.MaxValue, bool autoDispose = true)
         {
+            this.Init();
             this.MaxPayloadLength = maxPayloadLength;
             this.AutoDispose = autoDispose;
             this.UpdateHeader(); // BF-28-02-2024: Ensure headers are updated on new packets to prevent their values being nulls
