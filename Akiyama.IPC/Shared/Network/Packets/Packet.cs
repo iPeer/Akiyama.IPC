@@ -101,6 +101,13 @@ namespace Akiyama.IPC.Shared.Network.Packets
         }
 
         /// <summary>
+        /// This method is called immediately after a packet is constructed, and allows packets to enforce limitations such as max payload size and AutoDispose state and/or set default values to their properties at initialisation time.
+        /// <br /><br /><b>Note</b>: At the time this mmethod is called, packets do not have access to their <see cref="Header"/> or <see cref="Payload"/>.
+        /// </summary>
+        /// <remarks>Added in 1.1.0</remarks>
+        public virtual void Init() { }
+
+        /// <summary>
         /// When overridden, allows the packet to set up data after being received, so that it may be accessed later, for example through Properties.
         /// <br />If not overridden, the packet will not be populated, however its raw data will still be available via <see cref="Payload"/>.
         /// <br />For examples of this method's usage, see <seealso href="https://github.com/iPeer/Akiyama.IPC/blob/master/Akiyama.IPC/Shared/Network/Packets/TestPacket.cs"/>.
@@ -141,6 +148,19 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// <inheritdoc cref="SetPayload(byte[])"/>
         [Obsolete("This method is deprecated and will be removed in a future update. Use SetPayload(byte[]) instead.")]
         public void SetData(byte[] data) => SetPayload(data);
+
+        /// <summary>
+        /// Appends <paramref name="bytes"/> to this <see cref="Packet"/>'s current Payload.
+        /// </summary>
+        /// <param name="bytes">The bytes to append.</param>
+        /// <remarks>Added in 1.1.0</remarks>
+        public void AppendPayload(byte[] bytes) // Add a prepend too??
+        {
+            byte[] newPayload = new byte[this.PayloadLength + bytes.Length];
+            Array.Copy(this.Payload, newPayload, this.PayloadLength);
+            Array.Copy(bytes, 0, newPayload, this.PayloadLength, bytes.Length);
+            this.SetPayload(newPayload);
+        }
 
         /// <summary>
         /// Sets the Header for this packet. <b>This function should only be used internally.</b>

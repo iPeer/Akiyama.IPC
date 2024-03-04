@@ -151,5 +151,20 @@ namespace UnitTests.NET
             Assert.ThrowsException<ArgumentException>(() => { byte[] t = test.GetCustomHeaderBytes(7, testBytes.Length); }); // anything above and index of 6 here should throw an exception
         }
 
+        [TestMethod]
+        public void PacketPayloadAppend()
+        {
+            byte[] iP = new byte[] { 255, 255 };
+            byte[] append = new byte[] { 1, 2 };
+            using (TestPacket tp = new TestPacket())
+            {
+                tp.SetPayload(iP);
+                TestContext.WriteLine($"Before: 0x{string.Join(", 0x", tp.Payload)}");
+                tp.AppendPayload(append);
+                TestContext.WriteLine($"After: 0x{string.Join(", 0x", tp.Payload)}");
+                Assert.AreEqual("255 255 1 2", string.Join(" ", tp.Payload));
+            }
+        }
+
     }
 }
