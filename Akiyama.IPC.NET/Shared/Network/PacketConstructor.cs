@@ -1,9 +1,6 @@
 ﻿using Akiyama.IPC.Shared.Exceptions;
 using Akiyama.IPC.Shared.Network.Packets;
 using Akiyama.IPC.Shared.Typers;
-using System;
-using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace Akiyama.IPC.Shared.Network
@@ -20,6 +17,8 @@ namespace Akiyama.IPC.Shared.Network
         /// The byte that, when received via the IPC streams indicates the start of a data packet.
         /// </summary>
         public const byte PRE_PACKET_BYTE = 0x69;
+
+        public static readonly Version MINIMUM_PACKET_VERSION = new Version(1, 1, 0);
 
         /// <summary>
         /// Creates a new instance of <see cref="PacketConstructor"/> to use in an <see cref="IPCEndpoint"/>.
@@ -42,6 +41,14 @@ namespace Akiyama.IPC.Shared.Network
             stream.Read(idBytes, 0, idBytes.Length);
             byte[] dataLen = new byte[4];
             stream.Read(dataLen, 0, dataLen.Length);
+            byte[] versionBytes = new byte[3];
+            stream.Read(versionBytes, 0, versionBytes.Length);
+            Version packetVersion = new Version(versionBytes[0], versionBytes[1], versionBytes[2]);
+            if (packetVersion < MINIMUM_PACKET_VERSION)
+            {
+                
+                throw new IncorrectPacketVersionException(packetVersion);
+            }
             byte[] customData = new byte[Packet.CUSTOM_HEADER_BYTES];
             stream.Read(customData, 0, customData.Length);
 

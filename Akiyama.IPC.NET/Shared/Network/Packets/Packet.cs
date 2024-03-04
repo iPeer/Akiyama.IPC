@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Reflection;
 
 namespace Akiyama.IPC.Shared.Network.Packets
 {
@@ -15,7 +14,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// </summary>
         private bool _disposed;
         // TODO: Docstring
-        public static readonly int BASE_HEADER_SIZE = (sizeof(int) * 2);
+        public static readonly int BASE_HEADER_SIZE = ((sizeof(byte) * 3) + (sizeof(int) * 2));
         // TODO: Docstring
         public static readonly int CUSTOM_HEADER_BYTES = 12;
         /// <summary>
@@ -60,6 +59,12 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// Returns the combined length of this Packet's header and payload.
         /// </summary>
         public int TotalLength => this.Payload.Length + this.Header.Length;
+
+        /// <summary>
+        /// The originating library version of this packet.
+        /// </summary>
+        public Version Version { get; private set; } = Assembly.GetExecutingAssembly().GetName().Version;
+
         /// <summary>
         /// If <b>true</b>, calling <see cref="SetPayload(byte[])"/> will not automatically update the packet's header, requiring manual calls to <see cref="UpdateHeader()"/> instead.
         /// <br/>This Property can be configured via <see cref="SetAutomaticHeaderUpdates(bool)"/>.
@@ -80,7 +85,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
         public int MaxPayloadLength { get; private set; } = int.MaxValue;
         /// <inheritdoc cref="MaxPayloadLength"/>
         [Obsolete("This Property is deprecated and will be removed in a future update. Use MaxPayloadLength instead.")]
-        public int MaxDataLength {  get { return this.MaxPayloadLength; } }
+        public int MaxDataLength { get { return this.MaxPayloadLength; } }
 
         /// <summary>
         /// Creates a new instance of this <see cref="Packet"/> with no predfined restrictions or content.
@@ -144,6 +149,18 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// <br /><br /><b>WARNING</b>: This method can be destructive to data already contained within <see cref="Payload"/> if the overriding method is not written in a way that preserves it.
         /// </summary>
         public virtual void Prepare() { }
+
+        /// <summary>
+        /// Sets the <see cref="Version"/> for this packet.
+        /// <br /><br /><b>Note</b>: This refers to the version of the library used to SEND this packet and is set automatically by the <see cref="PacketConstructor"/>.
+        /// </summary>
+        /// <param name="major">The major version number</param>
+        /// <param name="minor">The minor version number</param>
+        /// <param name="patch">The patch version number (referred to as "build" in VS)</param>
+        internal void SetVersion(byte major, byte minor, byte patch)
+        {
+            this.Version = new Version(major, minor, patch);
+        }
 
         /// <summary>
         /// Sets the payload for this packet.
@@ -300,7 +317,9 @@ namespace Akiyama.IPC.Shared.Network.Packets
             Array.Copy(type, 0, header, 0, type.Length);
             // Copy the length bytes to the header
             Array.Copy(dLen, 0, header, 4, dLen.Length);
-            Array.Copy(this.CustomHeaderBytes, 0, header, 8, CUSTOM_HEADER_BYTES);
+            byte[] versionBytes = new byte[3] { (byte)this.Version.Major, (byte)this.Version.Minor, (byte)this.Version.Build };
+            Array.Copy(versionBytes, 0, header, 8, versionBytes.Length);
+            Array.Copy(this.CustomHeaderBytes, 0, header, BASE_HEADER_SIZE, CUSTOM_HEADER_BYTES);
 
             this.SetHeader(header);
         }
