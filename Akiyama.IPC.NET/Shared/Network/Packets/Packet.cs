@@ -1,4 +1,7 @@
-﻿namespace Akiyama.IPC.Shared.Network.Packets
+﻿using System;
+using System.Linq;
+
+namespace Akiyama.IPC.Shared.Network.Packets
 {
 
     /// <summary>
@@ -11,11 +14,14 @@
         /// <see langword="true"/> if this instance has been disposed, otherwise <see langword="false"/>.
         /// </summary>
         private bool _disposed;
-
+        // TODO: Docstring
+        public static readonly int BASE_HEADER_SIZE = (sizeof(int) * 2);
+        // TODO: Docstring
+        public static readonly int CUSTOM_HEADER_BYTES = 12;
         /// <summary>
         /// Indicates the length the Packet header. This field is <see langword="static"/> and <see langword="readonly"/>.
         /// </summary>
-        public static readonly int HEADER_SIZE = 20;
+        public static readonly int HEADER_SIZE = (BASE_HEADER_SIZE + CUSTOM_HEADER_BYTES);
 
         /// <summary>
         /// The ID of this Packet.
@@ -29,6 +35,9 @@
         /// <inheritdoc cref="Payload"/>
         [Obsolete("This Property is deprecated and will be removed in a future update. Use Payload instead.")]
         public byte[] Data { get { return this.Payload; } }
+
+        // TODO: Docstring
+        public byte[] CustomHeaderBytes { get; private set; } = new byte[CUSTOM_HEADER_BYTES];
         /// <summary>
         /// The Header bytes for this Packet.
         /// <br/><br/><b>Note</b>: Modifying this value directly should be avoided. See <see cref="SetCustomHeaderByte(byte, int)"/> and <see cref="SetCustomHeaderBytes(byte[], int)"/> instead.
@@ -178,9 +187,9 @@
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public void SetCustomHeaderByte(byte value, int offset)
         {
-            int realOffset = sizeof(int) + offset;
-            if (offset < 0 || realOffset >= HEADER_SIZE - 4) { throw new ArgumentOutOfRangeException("offset"); }
-            this.Header[realOffset] = value;
+            if (offset < 0 || offset >= CUSTOM_HEADER_BYTES) { throw new ArgumentOutOfRangeException("offset"); }
+            this.CustomHeaderBytes[offset] = value;
+            this.UpdateCustomHeaderBytes();
         }
 
         /// <summary>
@@ -197,9 +206,9 @@
         {
             if (data == null) { throw new ArgumentNullException("data"); }
             if (data.Length == 0) { return; }
-            int realOffset = sizeof(int) + offset;
-            if (offset < 0 || realOffset + (data.Length - 1) >= HEADER_SIZE - 4) { throw new ArgumentException("Supplied data falls outside of available space.", "data"); }
-            Array.Copy(data, 0, this.Header, realOffset, data.Length);
+            if (offset < 0 || offset >= CUSTOM_HEADER_BYTES) { throw new ArgumentException("Supplied data falls outside of available space.", "data"); }
+            Array.Copy(data, 0, this.CustomHeaderBytes, offset, data.Length);
+            this.UpdateCustomHeaderBytes();
         }
 
         /// <summary>
@@ -211,9 +220,8 @@
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public byte GetCustomHeaderByte(int index)
         {
-            int realOffset = index + 4;
-            if (index < 0 || realOffset >= HEADER_SIZE - 4) { throw new ArgumentOutOfRangeException("offset"); }
-            return this.Header[realOffset];
+            if (index < 0 || index >= CUSTOM_HEADER_BYTES) { throw new ArgumentOutOfRangeException("offset"); }
+            return this.CustomHeaderBytes[index];
         }
 
         /// <summary>
@@ -244,9 +252,15 @@
         {
             if (buffer == null) { throw new ArgumentNullException("buffer"); }
             if (buffer.Length == 0) { throw new InvalidOperationException("Cannot read into 0-length buffer"); }
-            int realOffset = offset + 4;
-            if (offset < 0 || realOffset + (buffer.Length - 1) >= HEADER_SIZE - 4) { throw new ArgumentException("Supplied buffer falls outside of available space.", "buffer"); }
-            Array.Copy(this.Header, realOffset, buffer, 0, buffer.Length);
+            if (offset < 0 || offset >= CUSTOM_HEADER_BYTES || (offset + buffer.Length) >= CUSTOM_HEADER_BYTES) { throw new ArgumentException("Supplied buffer falls outside of available space.", "buffer"); }
+            Array.Copy(this.Header, offset, buffer, 0, buffer.Length);
+        }
+
+        private void UpdateCustomHeaderBytes()
+        {
+            byte[] headerBytes = this.Header;
+            Array.Copy(this.CustomHeaderBytes, 0, headerBytes, HEADER_SIZE - CUSTOM_HEADER_BYTES, CUSTOM_HEADER_BYTES);
+            this.SetHeader(headerBytes);
         }
 
         /// <summary>
@@ -272,11 +286,11 @@
 
 
             byte[] header = this.Header;
-            // Copy the ID bytes to the START of the packet
+            // Copy the ID bytes to the header
             Array.Copy(type, 0, header, 0, type.Length);
-            // Copy the length bytes to the END of the packet
-            // "- 5" since the Length is 1-indexed, where actual entries are 0-indexed.
-            Array.Copy(dLen, 0, header, header.Length - 4, dLen.Length);
+            // Copy the length bytes to the header
+            Array.Copy(dLen, 0, header, 4, dLen.Length);
+            Array.Copy(this.CustomHeaderBytes, 0, header, 8, CUSTOM_HEADER_BYTES);
 
             this.SetHeader(header);
         }

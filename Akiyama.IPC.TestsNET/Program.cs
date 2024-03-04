@@ -18,7 +18,7 @@ namespace AkiyamaIPC.TestsNF
             client.PacketReceived += OnPacketRecvClient;
             server.PacketReceived += OnPacketRecvServer;
 
-            //server.Start();
+            server.Start();
             Console.WriteLine("Server started, press any key to start client");
             Console.ReadKey();
             client.Start();

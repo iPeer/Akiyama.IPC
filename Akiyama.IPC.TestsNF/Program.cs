@@ -4,6 +4,7 @@ using Akiyama.IPC.Shared.Events;
 using Akiyama.IPC.Shared.Network;
 using Akiyama.IPC.Shared.Network.Packets;
 using System;
+using System.IO;
 
 namespace AkiyamaIPC.TestsNF
 {
@@ -104,6 +105,11 @@ namespace AkiyamaIPC.TestsNF
             if (pt == PacketType.STRING)
             {
                 Console.WriteLine($"[CLIENT] String packet, got value: {((StringPacket)packet).Text}");
+                using (FileStream fr = new FileStream("./packet.bin", FileMode.OpenOrCreate))
+                {
+                    fr.Write(packet.Header, 0, packet.HeaderLength);
+                    fr.Write(packet.Payload, 0, packet.PayloadLength);
+                }
             }
             else if (pt == PacketType.INT)
             {

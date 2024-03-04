@@ -15,6 +15,19 @@ namespace UnitTests.NF
             set { this._testContext = value; }
         }
 
+        [TestMethod]
+        public void TestPacketRangeWriteFullRange()
+        {
+            byte[] values = new byte[Packet.CUSTOM_HEADER_BYTES];
+            for (int x = 0; x < values.Length; x++)
+            {
+                values[x] = 255;
+            }
+            TestPacket tp = new TestPacket();
+            tp.SetCustomHeaderBytes(values, 0);
+            TestContext.WriteLine($"0x{string.Join(", 0x", tp.Header)}");
+        }
+
 
         [TestMethod]
         public void TestPacketSingleHeaderCustomDataClobberFix()
@@ -31,7 +44,6 @@ namespace UnitTests.NF
             TestContext.WriteLine($"Recv: 0x{r}");
             TestContext.WriteLine($"0x{string.Join(", 0x", test.Header)}");
             Assert.AreEqual(_byte, r);
-            // No assertion needed, an exception will fail the test.
 
         }
 
