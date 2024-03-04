@@ -13,9 +13,16 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// <see langword="true"/> if this instance has been disposed, otherwise <see langword="false"/>.
         /// </summary>
         private bool _disposed;
-        // TODO: Docstring
+        /// <summary>
+        /// Returns the minimum functional header length that contains enough space for all the required elements. This field is <see langword="static"/> and <see langword="readonly"/>.
+        /// </summary>
+        /// <remarks>Added in 1.1.0</remarks>
         public static readonly int BASE_HEADER_SIZE = ((sizeof(byte) * 3) + (sizeof(int) * 2));
-        // TODO: Docstring
+
+        /// <summary>
+        /// The number of bytes to add to <see cref="BASE_HEADER_SIZE"/> for user-customisable bytes. This field is <see langword="static"/> and <see langword="readonly"/>.
+        /// </summary>
+        /// <remarks>Added in 1.1.0</remarks>
         public static readonly int CUSTOM_HEADER_BYTES = 12;
         /// <summary>
         /// Indicates the length the Packet header. This field is <see langword="static"/> and <see langword="readonly"/>.
@@ -34,8 +41,10 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// <inheritdoc cref="Payload"/>
         [Obsolete("This Property is deprecated and will be removed in a future update. Use Payload instead.")]
         public byte[] Data { get { return this.Payload; } }
-
-        // TODO: Docstring
+        /// <summary>
+        /// This <see cref="Packet"/>'s Custom Header Bytes.
+        /// </summary>
+        /// <remarks>Added in 1.1.0</remarks>
         public byte[] CustomHeaderBytes { get; private set; } = new byte[CUSTOM_HEADER_BYTES];
         /// <summary>
         /// The Header bytes for this Packet.
@@ -85,7 +94,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
         public int MaxPayloadLength { get; private set; } = int.MaxValue;
         /// <inheritdoc cref="MaxPayloadLength"/>
         [Obsolete("This Property is deprecated and will be removed in a future update. Use MaxPayloadLength instead.")]
-        public int MaxDataLength { get { return this.MaxPayloadLength; } }
+        public int MaxDataLength {  get { return this.MaxPayloadLength; } }
 
         /// <summary>
         /// Creates a new instance of this <see cref="Packet"/> with no predfined restrictions or content.
@@ -157,9 +166,10 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// <param name="major">The major version number</param>
         /// <param name="minor">The minor version number</param>
         /// <param name="patch">The patch version number (referred to as "build" in VS)</param>
+        /// <remarks>Added in 1.1.0</remarks>
         internal void SetVersion(byte major, byte minor, byte patch)
         {
-            this.Version = new Version(major, minor, patch);
+            this.Version = new Version(major, minor, patch); 
         }
 
         /// <summary>
@@ -283,6 +293,10 @@ namespace Akiyama.IPC.Shared.Network.Packets
             Array.Copy(this.Header, offset, buffer, 0, buffer.Length);
         }
 
+        /// <summary>
+        /// Forces this <see cref="Packet"/> to update its header after <see cref="CustomHeaderBytes"/> has been changed.
+        /// </summary>
+        /// <remarks>Added in 1.1.0</remarks>
         private void UpdateCustomHeaderBytes()
         {
             byte[] headerBytes = this.Header;
@@ -317,8 +331,10 @@ namespace Akiyama.IPC.Shared.Network.Packets
             Array.Copy(type, 0, header, 0, type.Length);
             // Copy the length bytes to the header
             Array.Copy(dLen, 0, header, 4, dLen.Length);
+            // Add the current assembly's version to the packet header
             byte[] versionBytes = new byte[3] { (byte)this.Version.Major, (byte)this.Version.Minor, (byte)this.Version.Build };
             Array.Copy(versionBytes, 0, header, 8, versionBytes.Length);
+            // Write the Custom Header Bytes to the header
             Array.Copy(this.CustomHeaderBytes, 0, header, BASE_HEADER_SIZE, CUSTOM_HEADER_BYTES);
 
             this.SetHeader(header);
