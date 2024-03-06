@@ -14,6 +14,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// <summary>
         /// <see langword="true"/> if this instance has been disposed, otherwise <see langword="false"/>.
         /// </summary>
+        /// <exclude/>
         private bool _disposed;
         /// <summary>
         /// Returns the minimum functional header length that contains enough space for all the required elements. This field is <see langword="static"/> and <see langword="readonly"/>.

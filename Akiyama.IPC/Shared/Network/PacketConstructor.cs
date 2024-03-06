@@ -2,6 +2,7 @@
 using Akiyama.IPC.Shared.Network.Packets;
 using Akiyama.IPC.Shared.Typers;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,12 @@ namespace Akiyama.IPC.Shared.Network
         /// The byte that, when received via the IPC streams indicates the start of a data packet.
         /// </summary>
         public const byte PRE_PACKET_BYTE = 0x69;
+
+        /// <summary>
+        /// The absolute maximum number of times any one <see cref="Packet"/> may be split.
+        /// <br />Packet splitting operations that would result in a number of splits greater than this number will throw a <see cref="TooManySplitsException"/>.
+        /// </summary>
+        public const int MAX_PACKET_SPLITS = byte.MaxValue;
 
         /// <summary>
         /// The minimum allowed packet version that this <see cref="PacketConstructor"/> will allow.
@@ -339,7 +346,78 @@ namespace Akiyama.IPC.Shared.Network
         /// <returns>A string created from the bytes contained with <paramref name="bytes"/>. Encoded using <paramref name="encoding"/>.</returns>
         public static string BytesToString(byte[] bytes, Encoding encoding)
         {
+            bytes.ToArray();
             return encoding.GetString(bytes);
+        }
+
+        /// <summary>
+        /// Splits <paramref name="packet"/> into enough packets of its type given <paramref name="lengthLimit"/>.
+        /// <br />If <paramref name="lengthLimit"/> is equal to or greater than the current payload length of <paramref name="packet"/>, a list containing the unmodified will be returned.
+        /// <br />Throws <see cref="TooManySplitsException"/> is the resulting split would result in &gt;256 packets.
+        /// <br /><br /><b>WARNING</b>: This method may be destructive to previously existing Custom Header Bytes. This method assigns the packet's current index into the split, and the total number of splits to the first two bytes of Custom Header Bytes respectively.
+        /// <br /><br /><b>WARNING</b>: The initial packet given to this method will automatically be disposed of after it has been split. If you need to retain the initial packet, consider using <see cref="SplitPacket(Packet, int, out Packet)"/> instead.
+        /// <br /><br /><b>NOTE</b>: Packet split indexes are zero-indexed, ie. the FIRST packet in the split will have a split index of 0.
+        /// </summary>
+        /// <param name="packet">The packet to split</param>
+        /// <param name="lengthLimit">The length size at which to split the packet.</param>
+        /// <returns>A typed list containing packets derived from <paramref name="packet"/> with their payload split at <paramref name="lengthLimit"/> intervals.</returns>
+        /// <exception cref="TooManySplitsException"></exception>
+        public static List<Packet> SplitPacket(Packet packet, int lengthLimit)
+        {
+            return SplitPacketInternal(packet, lengthLimit, true);
+        }
+        /// <summary>
+        /// Splits <paramref name="packet"/> into enough packets of its type given <paramref name="lengthLimit"/>.
+        /// <br />If <paramref name="lengthLimit"/> is equal to or greater than the current payload length of <paramref name="packet"/>, a list containing the unmodified will be returned.
+        /// <br />Throws <see cref="TooManySplitsException"/> is the resulting split would result in &gt;256 packets.
+        /// <br /><br /><b>WARNING</b>: This method may be destructive to previously existing Custom Header Bytes. This method assigns the packet's current index into the split, and the total number of splits to the first two bytes of Custom Header Bytes respectively.
+        /// <br /><br /><b>NOTE</b>: Packet split indexes are zero-indexed, ie. the FIRST packet in the split will have a split index of 0.
+        /// </summary>
+        /// <param name="packet">The packet to split</param>
+        /// <param name="lengthLimit">The length size at which to split the packet.</param>
+        /// <param name="originalPacket">The packet that was originally passed to this method</param>
+        /// <returns>A typed list containing packets derived from <paramref name="packet"/> with their payload split at <paramref name="lengthLimit"/> intervals.</returns>
+        /// <exception cref="TooManySplitsException"></exception>
+        public static List<Packet>SplitPacket(Packet packet, int lengthLimit, out Packet originalPacket)
+        {
+            originalPacket = packet;
+            return SplitPacketInternal(packet, lengthLimit, false);
+        }
+        /// <summary>
+        /// Splits <paramref name="packet"/> into enough packets of its type given <paramref name="lengthLimit"/>.
+        /// <br />If <paramref name="lengthLimit"/> is equal to or greater than the current payload length of <paramref name="packet"/>, a list containing the unmodified will be returned.
+        /// <br />Throws <see cref="TooManySplitsException"/> is the resulting split would result in &gt;256 packets.
+        /// <br /><br /><b>WARNING</b>: This method may be destructive to previously existing Custom Header Bytes. This method assigns the packet's current index into the split, and the total number of splits to the first two bytes of Custom Header Bytes respectively.
+        /// <br /><br /><b>NOTE</b>: Packet split indexes are zero-indexed, ie. the FIRST packet in the split will have a split index of 0.
+        /// </summary>
+        /// <param name="packet">The packet to split</param>
+        /// <param name="lengthLimit">The length size at which to split the packet.</param>
+        /// <param name="dispose">If <see langword="true"/>, <paramref name="packet"/> will be disposed of once splitting is complete.</param>
+        /// <returns>A typed list containing packets derived from <paramref name="packet"/> with their payload split at <paramref name="lengthLimit"/> intervals.</returns>
+        /// <exception cref="TooManySplitsException"></exception>
+        /// <exclude/>
+        private static List<Packet> SplitPacketInternal(Packet packet, int lengthLimit, bool dispose = true)
+        {
+            if (lengthLimit >= packet.PayloadLength)
+            {
+                return new List<Packet> { packet };
+            }
+            int maxSplits = ((int)Math.Ceiling((double)((double)packet.PayloadLength / (double)lengthLimit) - 1d));
+            if (maxSplits > MAX_PACKET_SPLITS) { throw new TooManySplitsException(lengthLimit, maxSplits); }
+            Type pType = packet.GetType();
+            List<Packet> @out = new List<Packet>();
+            for (int x = 0; x <= maxSplits; x++)
+            {
+                Packet splitPacket = (Packet)Activator.CreateInstance(pType);
+                splitPacket.SetMaxLength(lengthLimit);
+                int offset = (x * lengthLimit);
+                byte[] bytes = packet.Payload.Skip(offset).Take(lengthLimit).ToArray();
+                splitPacket.SetPayload(bytes);
+                splitPacket.SetCustomHeaderBytes(new byte[] { (byte)x, (byte)maxSplits }, 0);
+                @out.Add(splitPacket);
+            }
+            if (dispose) { packet.Dispose(); }
+            return @out;
         }
 
     }

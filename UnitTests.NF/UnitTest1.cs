@@ -1,7 +1,10 @@
-﻿using Akiyama.IPC.Shared.Network;
+﻿using Akiyama.IPC.Shared.Exceptions;
+using Akiyama.IPC.Shared.Network;
 using Akiyama.IPC.Shared.Network.Packets;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace UnitTests.NF
 {
@@ -178,6 +181,67 @@ namespace UnitTests.NF
                 Assert.AreEqual("255 255 1 2", string.Join(" ", tp.Payload));
             }
         }
+
+        [TestMethod]
+        public void PacketSplitTooMany()
+        {
+            // Passes if the library correctly raises a TooManySplitsException when trying to split a packet more than 256 times
+            byte[] testPayload = new byte[513];
+            using (TestPacket tp = new TestPacket())
+            {
+                tp.SetPayload(testPayload);
+                Assert.ThrowsException<TooManySplitsException>(() => { List<Packet> list = PacketConstructor.SplitPacket(tp, 2); }); // A split of 2 against a packet payload of 513 bytes, should result in 257 packets, which is not allowed
+            }
+        }
+
+        [TestMethod]
+        public void PacketSplitMaxSplits()
+        {
+            // Passes if the library correctly raises a TooManySplitsException when trying to split a packet more than 256 times
+            byte[] testPayload = new byte[510];
+            using (TestPacket tp = new TestPacket())
+            {
+                tp.SetPayload(testPayload.Concat(new byte[] { 69, 69 }).ToArray());
+                List<Packet> list = PacketConstructor.SplitPacket(tp, 2);
+                Assert.AreEqual(PacketConstructor.MAX_PACKET_SPLITS, (list.Count - 1)); // We - 1 on count here because PacketConstructor.MAX_PACKET_SPLITS
+                                                                                        // is on the assumption that 1 == 0, 2 == 1, etc. thus meaning that 255 == 256.
+            }
+        }
+
+        [TestMethod]
+        public void PacketSplitTen()
+        {
+            // Passes if the library correctly raises a TooManySplitsException when trying to split a packet more than 256 times
+            byte[] testPayload = new byte[20];
+            using (TestPacket tp = new TestPacket())
+            {
+                tp.SetPayload(testPayload);
+                List<Packet> list = PacketConstructor.SplitPacket(tp, 2);
+                Assert.AreEqual(10, list.Count);
+            }
+        }
+
+        [TestMethod]
+        public void PacketSplitPayloadTest()
+        {
+            byte[] payloadOne = new byte[] { 1, 2, 3, 4, 5 };
+            byte[] payloadTwo = new byte[] { 6, 7, 8, 9, 10 };
+
+            using (TestPacket tp = new TestPacket())
+            {
+                tp.SetPayload(payloadOne.Concat(payloadTwo).ToArray());
+                List<Packet> list = PacketConstructor.SplitPacket(tp, 5);
+                Packet packetOne = list.First();
+                Packet packetTwo = list.Last();
+                TestContext.WriteLine($"Payload One: 0x{string.Join(", 0x", packetOne.Payload)}");
+                Assert.AreEqual("1 2 3 4 5", string.Join(" ", packetOne.Payload));
+
+                TestContext.WriteLine($"Payload Two: 0x{string.Join(", 0x", packetTwo.Payload)}");
+                Assert.AreEqual("6 7 8 9 10", string.Join(" ", packetTwo.Payload));
+            }
+
+        }
+
 
     }
 }

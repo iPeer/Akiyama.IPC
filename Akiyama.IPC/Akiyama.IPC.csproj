@@ -47,6 +47,7 @@
     <Compile Include="Server\IPCServer.cs" />
     <Compile Include="Shared\Events\OnPacketReceivedEventArgs.cs" />
     <Compile Include="Shared\Exceptions\IncorrectPacketVersionException.cs" />
+    <Compile Include="Shared\Exceptions\TooManySplitsException.cs" />
     <Compile Include="Shared\Exceptions\UnknownPacketException.cs" />
     <Compile Include="Shared\Network\IPCEndpoint.cs" />
     <Compile Include="Shared\Network\PacketConstructor.cs" />
