@@ -15,7 +15,7 @@ namespace Akiyama.IPC.Shared.Network
         /// <summary>
         /// See the instance of the specific <see cref="PacketTyper"/> used for this instance.
         /// </summary>
-        readonly PacketTyper packetTyper;
+        internal readonly PacketTyper packetTyper;
 
         /// <summary>
         /// The byte that, when received via the IPC streams indicates the start of a data packet.
@@ -63,12 +63,26 @@ namespace Akiyama.IPC.Shared.Network
                 
                 throw new IncorrectPacketVersionException(packetVersion);
             }
-            byte[] customData = new byte[Packet.CUSTOM_HEADER_BYTES];
-            stream.Read(customData, 0, customData.Length);
 
             int id = BytesToInt32(idBytes);
             int dataLength = BytesToInt32(dataLen);
             Packet packet = this.packetTyper.GetPacketObjectFromId(id) ?? throw new UnknownPacketException(id);
+
+            // Setting values while still reading the stream lmao ———————————————————————
+
+            // Backwards compatibility baybee
+            if (versionBytes[0] >= 1 && versionBytes[1] >= 2) // Packet version >= 1.2.0
+            {
+                bool splitPacketIndicator = stream.ReadByte() == 1;
+                _ = stream.ReadByte(); // Skip currently unused header byte
+                packet.SetIsSplit(splitPacketIndicator);
+            }
+
+            byte[] customData = new byte[Packet.CUSTOM_HEADER_BYTES];
+            stream.Read(customData, 0, customData.Length);
+
+            // ———————————————— END STREAM READING ————————————————
+
             packet.SetCustomHeaderBytes(customData, 0); // BF 29/02/2024: Fix packets losing their custom data after transmission over the socket
 
             byte[] pData = new byte[dataLength];
@@ -80,7 +94,7 @@ namespace Akiyama.IPC.Shared.Network
             packet.SetAutomaticHeaderUpdates(true);
             packet.UpdateHeader();
 
-            packet.Populate();
+            if (!packet.IsSplit) { packet.Populate(); } // v1.2 - 07/03/24 -- Don't run Populate() on split packets
 
             return packet;
         }
@@ -412,6 +426,7 @@ namespace Akiyama.IPC.Shared.Network
                 splitPacket.SetMaxLength(lengthLimit);
                 int offset = (x * lengthLimit);
                 byte[] bytes = packet.Payload.Skip(offset).Take(lengthLimit).ToArray();
+                splitPacket.SetIsSplit(true);
                 splitPacket.SetPayload(bytes);
                 splitPacket.SetCustomHeaderBytes(new byte[] { (byte)x, (byte)maxSplits }, 0);
                 @out.Add(splitPacket);

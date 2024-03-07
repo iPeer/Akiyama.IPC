@@ -45,10 +45,12 @@
     <Compile Include="Client\IPCClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\IPCServer.cs" />
+    <Compile Include="Shared\Events\OnAllSplitPacketsReceivedEventArgs.cs" />
     <Compile Include="Shared\Events\OnPacketReceivedEventArgs.cs" />
     <Compile Include="Shared\Exceptions\IncorrectPacketVersionException.cs" />
     <Compile Include="Shared\Exceptions\TooManySplitsException.cs" />
     <Compile Include="Shared\Exceptions\UnknownPacketException.cs" />
+    <Compile Include="Shared\Helpers\SplitPacketContainer.cs" />
     <Compile Include="Shared\Network\IPCEndpoint.cs" />
     <Compile Include="Shared\Network\PacketConstructor.cs" />
     <Compile Include="Shared\Network\Packets\GenericDataPacket.cs" />

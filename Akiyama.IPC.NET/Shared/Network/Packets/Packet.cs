@@ -20,7 +20,8 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// Returns the minimum functional header length that contains enough space for all the required elements. This field is <see langword="static"/> and <see langword="readonly"/>.
         /// </summary>
         /// <remarks>Added in 1.1.0</remarks>
-        public static readonly int BASE_HEADER_SIZE = ((sizeof(byte) * 3) + (sizeof(int) * 2));
+        public static readonly int BASE_HEADER_SIZE = ((sizeof(byte) * 3) + (sizeof(int) * 2) + sizeof(byte) + sizeof(byte));
+                                                     //   VERSION BYTES      ID + Payload Len     IsSplit        <unused>
 
         /// <summary>
         /// The number of bytes to add to <see cref="BASE_HEADER_SIZE"/> for user-customisable bytes. This field is <see langword="static"/> and <see langword="readonly"/>.
@@ -89,6 +90,12 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// <br />This Property can be configured via <see cref="SetAutoDispose(bool)"/>.
         /// </summary>
         public bool AutoDispose { get; private set; } = true;
+
+        /// <summary>
+        /// If <see langword="true"/>, indicates that this <see cref="Packet"/> has had its payload split over multiple packets
+        /// </summary>
+        /// <remarks>Added in 1.2.0</remarks>
+        public bool IsSplit { get; private set; } = false;
 
         /// <summary>
         /// Returns the maximum supported payload length for this particular Packet.
@@ -177,8 +184,9 @@ namespace Akiyama.IPC.Shared.Network.Packets
 
         /// <summary>
         /// Sets the payload for this packet.
-        /// <br /><b>Note</b>: Larger packets will take longer to send, take longer to be read, and will use more RAM (on both ends) while being processed. Consider splitting larger packets to make them more efficient.
-        /// <br/><br/>Throws <see cref="InvalidOperationException"/> if the length of <paramref name="data"/> exceeds this Packet's <see cref="MaxPayloadLength"/>.
+        /// <br/>Throws <see cref="InvalidOperationException"/> if the length of <paramref name="data"/> exceeds this Packet's <see cref="MaxPayloadLength"/>.
+        /// <br /><br /><b>Note</b>: Larger packets will take longer to send, take longer to be read, and will use more RAM (on both ends) while being processed. Consider splitting larger packets to make them more efficient.
+        /// <br /><br /><b>Note</b>: This method is subject to conditional header updates depending on <see cref="AutomaticHeaderUpdatesDisabled"/>.
         /// </summary>
         /// <param name="data"></param>
         /// <exception cref="InvalidOperationException"></exception>"
@@ -337,6 +345,14 @@ namespace Akiyama.IPC.Shared.Network.Packets
             // Add the current assembly's version to the packet header
             byte[] versionBytes = new byte[3] { (byte)this.Version.Major, (byte)this.Version.Minor, (byte)this.Version.Build };
             Array.Copy(versionBytes, 0, header, 8, versionBytes.Length);
+
+
+            // The structure of the header will never change again, and I highly doubt the size of bytes and ints will change either,
+            // so hard coded values should be fine here, probably™ :)
+
+            header[11] = (byte)(this.IsSplit ? 1 : 0); // byte to indicate if this packet was split
+            header[12] = 0; // Currently unused
+
             // Write the Custom Header Bytes to the header
             Array.Copy(this.CustomHeaderBytes, 0, header, BASE_HEADER_SIZE, CUSTOM_HEADER_BYTES);
 
@@ -361,6 +377,18 @@ namespace Akiyama.IPC.Shared.Network.Packets
         public void SetAutoDispose(bool enabled)
         {
             this.AutoDispose = enabled;
+        }
+
+        /// <summary>
+        /// Sets whether or not this <see cref="Packet"/> has been split into multiple packets.
+        /// <br /><br /><b>Note</b>: This method is subject to conditional header updates depending on <see cref="AutomaticHeaderUpdatesDisabled"/>.
+        /// </summary>
+        /// <param name="value">The <see cref="bool"/> which indicates the status.</param>
+        /// <remarks>Added in 1.2.0</remarks>
+        internal void SetIsSplit(bool value)
+        {
+            this.IsSplit = value;
+            if (!this.AutomaticHeaderUpdatesDisabled) { this.UpdateHeader(); }
         }
 
         /// <summary>
