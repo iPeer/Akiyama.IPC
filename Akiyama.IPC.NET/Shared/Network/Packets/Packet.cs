@@ -96,6 +96,11 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// </summary>
         /// <remarks>Added in 1.2.0</remarks>
         public bool IsSplit { get; private set; } = false;
+        /// <summary>
+        /// The split ID for this packet. Every packet within the same split will have the same ID.
+        /// </summary>
+        /// <remarks>Added in 1.2.0</remarks>
+        public byte SplitID { get; private set; }
 
         /// <summary>
         /// Returns the maximum supported payload length for this particular Packet.
@@ -351,7 +356,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
             // so hard coded values should be fine here, probably™ :)
 
             header[11] = (byte)(this.IsSplit ? 1 : 0); // byte to indicate if this packet was split
-            header[12] = 0; // Currently unused
+            header[12] = this.SplitID;
 
             // Write the Custom Header Bytes to the header
             Array.Copy(this.CustomHeaderBytes, 0, header, BASE_HEADER_SIZE, CUSTOM_HEADER_BYTES);
@@ -388,6 +393,17 @@ namespace Akiyama.IPC.Shared.Network.Packets
         internal void SetIsSplit(bool value)
         {
             this.IsSplit = value;
+            if (!this.AutomaticHeaderUpdatesDisabled) { this.UpdateHeader(); }
+        }
+        /// <summary>
+        /// Sets the split ID for this packet. Only used if <see cref="IsSplit"/> is <see langword="true"/>. All packets within the same split share the same ID.
+        /// <br /><br /><b>Note</b>: This method is subject to conditional header updates depending on <see cref="AutomaticHeaderUpdatesDisabled"/>.
+        /// </summary>
+        /// <param name="splitId">The ID to set</param>
+        /// <remarks>Added in 1.2.0</remarks>
+        internal void SetSplitId(byte splitId)
+        {
+            this.SplitID = splitId;
             if (!this.AutomaticHeaderUpdatesDisabled) { this.UpdateHeader(); }
         }
 

@@ -102,6 +102,13 @@ namespace AkiyamaIPC.TestsNF
                         {
                             split.Text = splitStr;
                             int index = 0;
+                            StringPacket sameTime = new StringPacket();
+                            sameTime.Text = "Another split packet to test ID differences";
+                            List<Packet> two = new List<Packet>();
+                            two.AddRange(PacketConstructor.SplitPacket(sameTime, 5));
+                            two.Reverse(); // Test packets received in the wrong order
+                            server.SendPackets(two);
+                            sameTime.Dispose();
                             foreach (StringPacket _packet in PacketConstructor.SplitPacket(split, 5))
                             {
                                 packets.Add(_packet);

@@ -74,8 +74,9 @@ namespace Akiyama.IPC.Shared.Network
             if (versionBytes[0] >= 1 && versionBytes[1] >= 2) // Packet version >= 1.2.0
             {
                 bool splitPacketIndicator = stream.ReadByte() == 1;
-                _ = stream.ReadByte(); // Skip currently unused header byte
+                byte packetSplitId = (byte)stream.ReadByte();
                 packet.SetIsSplit(splitPacketIndicator);
+                packet.SetSplitId(packetSplitId);
             }
 
             byte[] customData = new byte[Packet.CUSTOM_HEADER_BYTES];
@@ -412,6 +413,7 @@ namespace Akiyama.IPC.Shared.Network
         /// <exclude/>
         private static List<Packet> SplitPacketInternal(Packet packet, int lengthLimit, bool dispose = true)
         {
+            packet.Prepare(); // BF 07/03/24: Ensure the packet is prepared (if it overrides) before splitting payload)
             if (lengthLimit >= packet.PayloadLength)
             {
                 return new List<Packet> { packet };
@@ -419,6 +421,10 @@ namespace Akiyama.IPC.Shared.Network
             int maxSplits = ((int)Math.Ceiling((double)((double)packet.PayloadLength / (double)lengthLimit) - 1d));
             if (maxSplits > MAX_PACKET_SPLITS) { throw new TooManySplitsException(lengthLimit, maxSplits); }
             Type pType = packet.GetType();
+            DateTime time = DateTime.Now;
+            // Calculate the packet's splitId
+            int @base = time.Hour + time.Minute + time.Second;
+            byte splitId = (byte)(@base + (int)Math.Floor((double)((1 + (time.Ticks % 10000)) / 114) % 255));
             List<Packet> @out = new List<Packet>();
             for (int x = 0; x <= maxSplits; x++)
             {
@@ -427,6 +433,7 @@ namespace Akiyama.IPC.Shared.Network
                 int offset = (x * lengthLimit);
                 byte[] bytes = packet.Payload.Skip(offset).Take(lengthLimit).ToArray();
                 splitPacket.SetIsSplit(true);
+                splitPacket.SetSplitId(splitId);
                 splitPacket.SetPayload(bytes);
                 splitPacket.SetCustomHeaderBytes(new byte[] { (byte)x, (byte)maxSplits }, 0);
                 @out.Add(splitPacket);

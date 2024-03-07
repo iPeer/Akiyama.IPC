@@ -45,6 +45,10 @@ namespace Akiyama.IPC.Shared.Helpers
             if (!this.ReceivedPackets.Any(a => a == 0)) // Abuse the fact that bytes default to 0x0 to check if all of the parts of the packets have been received since we set received to 1
             {
                 // I fear no man. But this code? ... it scares me — Akiyama
+
+                // Sort the packets into the right oder since we cannot guarantee they appear in order
+                this.IncomingPackets.Sort((a, b) => { return a.GetCustomHeaderByte(0).CompareTo(b.GetCustomHeaderByte(0)); });
+
                 List<byte[]> payloadDatas = new List<byte[]>();
                 foreach (Packet p in this.IncomingPackets)
                 {
@@ -62,6 +66,7 @@ namespace Akiyama.IPC.Shared.Helpers
                 {
                     _packet.SetMaxLength(payload.Length);
                     _packet.SetPayload(payload);
+                    _packet.SetSplitId(this.IncomingPackets.First().SplitID);
                     _packet.Populate();
                     this.SplitPacketCompletelyReceived?.Invoke(this, new OnAllSplitPacketsReceivedEventArgs(_packet));
                 }

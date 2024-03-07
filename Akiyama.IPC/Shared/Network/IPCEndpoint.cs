@@ -50,7 +50,7 @@ namespace Akiyama.IPC.Shared.Network
         /// Contains all currently operational <see cref="SplitPacketContainer"/>s for this <see cref="IPCEndpoint"/>.
         /// </summary>
         /// <remarks>Added in 1.2.0</remarks>
-        readonly Dictionary<int, SplitPacketContainer> SplitPacketContainers = new Dictionary<int, SplitPacketContainer>();
+        readonly Dictionary<string, SplitPacketContainer> SplitPacketContainers = new Dictionary<string, SplitPacketContainer>();
 
         /// <summary>
         /// The queue of packets waiting to be sent by this <see cref="IPCEndpoint"/>.
@@ -95,6 +95,13 @@ namespace Akiyama.IPC.Shared.Network
         /// If <see langword="true"/>, indicates that this <see cref="IPCEndpoint"/> should terminate when the opposing side disconnects instead of going back to waiting for connections.
         /// </summary>
         public bool TerminateOnDisconnect { get; set; } = false;
+
+        /// <summary>
+        /// Indicates whether this <see cref="IPCEndpoint"/> should automatically handle merging of split packets.
+        /// <br /><b>Note</b>: If this property is <see langword="true"/>, received packets that are split will not raise the <see cref="PacketReceived"/> event. Instead, the <see cref="SplitPacketsReceived"/> will be raised when all pieces of the <see cref="Packet"/> have been received.
+        /// <br />If this property is <see langword="false"/>, <see cref="PacketReceived"/> will be raised for each individual packet.
+        /// </summary>
+        public bool AutoHandleSplitPackets { get; set; } = true;
 
         /// <summary>
         /// Internal value storage for <see cref="RunAsBackgroundThread"/>.
@@ -174,9 +181,10 @@ namespace Akiyama.IPC.Shared.Network
         protected virtual void OnAllSplitPacketsReceived(object sender, OnAllSplitPacketsReceivedEventArgs e)
         {
             // Is this even legal?
-            this.SplitPacketContainers[e.Packet.ID].SplitPacketCompletelyReceived -= this.OnAllSplitPacketsReceived;
-            this.SplitPacketContainers[e.Packet.ID]?.Dispose();
-            this.SplitPacketContainers.Remove(e.Packet.ID);
+            string splitPacketKey = $"{e.Packet.ID}_{e.Packet.SplitID}";
+            this.SplitPacketContainers[splitPacketKey].SplitPacketCompletelyReceived -= this.OnAllSplitPacketsReceived;
+            this.SplitPacketContainers[splitPacketKey]?.Dispose();
+            this.SplitPacketContainers.Remove(splitPacketKey);
             this.SplitPacketsReceived?.Invoke(sender, e);
         }
 
@@ -403,20 +411,23 @@ namespace Akiyama.IPC.Shared.Network
                     {
                         Packet packet = this.PacketConstructor.CreateFromStream(this.IN_STREAM);
                         // If the packet IS split, call or create its SplitPacketContainer, and add the packet to it
-                        if (packet.IsSplit)
+                        if (packet.IsSplit && this.AutoHandleSplitPackets)
                         {
-                            if (!this.SplitPacketContainers.ContainsKey(packet.ID))
+                            string splitPacketKey = $"{packet.ID}_{packet.SplitID}";
+                            if (!this.SplitPacketContainers.ContainsKey(splitPacketKey))
                             {
                                 SplitPacketContainer packetContainer = new SplitPacketContainer(endpoint: this, packetId: packet.ID, expectedTotalPackets: (packet.GetCustomHeaderByte(1) + 1));
                                 packetContainer.SplitPacketCompletelyReceived += this.OnAllSplitPacketsReceived;
-                                this.SplitPacketContainers.Add(packet.ID, packetContainer);
+                                this.SplitPacketContainers.Add(splitPacketKey, packetContainer);
                             }
-                            this.SplitPacketContainers[packet.ID].ReceivePacket(packet);
+                            this.SplitPacketContainers[splitPacketKey].ReceivePacket(packet);
                             // Packets are NOT disposed here as we need to keep them around until we receive all of the splits
                             // They are later disposed when we have recieved ALL of them and raused the OnAllSplitPacketsReceived event
                         }
                         else // Otherwise, treat the packet as a normal one
                         {
+                            // When we receive a split packet, its Populate() method is never called on creation, if the packet is split but failed the check above, call its Populate method
+                            if (packet.IsSplit) { packet.Populate(); }
                             this.OnPacketReceived(new OnPacketReceivedEventArgs(packet));
                             packet.Dispose();
                         }
