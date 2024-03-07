@@ -12,7 +12,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// <summary>
         /// The <see cref="string"/> that is to be, or was transferred.
         /// </summary>
-        public string Text { get; set; }
+        public string Text { get; set; } = string.Empty;
 
         public override int ID { get; } = (int)PacketType.STRING;
 
