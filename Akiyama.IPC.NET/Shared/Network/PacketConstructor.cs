@@ -1,9 +1,6 @@
 ﻿using Akiyama.IPC.Shared.Exceptions;
 using Akiyama.IPC.Shared.Network.Packets;
 using Akiyama.IPC.Shared.Typers;
-using System;
-using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace Akiyama.IPC.Shared.Network
@@ -22,11 +19,7 @@ namespace Akiyama.IPC.Shared.Network
         public const byte PRE_PACKET_BYTE = 0x69;
 
         /// <summary>
-<<<<<<< HEAD
         /// The minimum allowed packet version that this <see cref="PacketConstructor"/> will allow.
-=======
-        /// The minimum allowed packet version that this <see cref="PacketConstructor"/> will accept.
->>>>>>> c2fa81b (Docs: Update documentation)
         /// <br />Packets with a lower version than this will throw an <see cref="IncorrectPacketVersionException"/> during construction.
         /// </summary>
         public static readonly Version MINIMUM_PACKET_VERSION = new Version(1, 1, 0);
