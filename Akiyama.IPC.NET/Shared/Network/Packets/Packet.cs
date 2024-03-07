@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
 
 namespace Akiyama.IPC.Shared.Network.Packets
@@ -337,8 +336,8 @@ namespace Akiyama.IPC.Shared.Network.Packets
 
             if (!BitConverter.IsLittleEndian) // I honestly have no idea if this is correct, how I think it works:
             {                                 // Ex. Our end IS little, so no reversal, the receiving in IS NOT, so later (in Populate()), it is reversed, and it SHOULD work??
-                type.Reverse();
-                dLen.Reverse();
+                Array.Reverse(type);
+                Array.Reverse(dLen);
             }
 
 

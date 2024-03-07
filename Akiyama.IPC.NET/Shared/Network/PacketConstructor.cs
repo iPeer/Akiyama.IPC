@@ -109,7 +109,7 @@ namespace Akiyama.IPC.Shared.Network
         public static int BytesToInt32(byte[] bytes)
         {
             if (bytes.Length != 4) { throw new InvalidOperationException("Specified byte[] is not an integer"); }
-            if (!BitConverter.IsLittleEndian) { bytes.Reverse(); }
+            if (!BitConverter.IsLittleEndian) { Array.Reverse(bytes); }
             return BitConverter.ToInt32(bytes, 0);
         }
 
@@ -121,7 +121,7 @@ namespace Akiyama.IPC.Shared.Network
         public static byte[] Int32ToBytes(int @int)
         {
             byte[] bytes = BitConverter.GetBytes(@int);
-            if (!BitConverter.IsLittleEndian) { bytes.Reverse(); }
+            if (!BitConverter.IsLittleEndian) { Array.Reverse(bytes); }
             return bytes;
         }
 
@@ -148,7 +148,7 @@ namespace Akiyama.IPC.Shared.Network
         public static byte[] Int64ToBytes(long @long)
         {
             byte[] bytes = BitConverter.GetBytes(@long);
-            if (!BitConverter.IsLittleEndian) { bytes.Reverse(); }
+            if (!BitConverter.IsLittleEndian) { Array.Reverse(bytes); }
             return bytes;
         }
 
@@ -163,7 +163,7 @@ namespace Akiyama.IPC.Shared.Network
         public static long BytesToInt64(byte[] bytes)
         {
             if (bytes.Length != 8) { throw new InvalidOperationException("Specified byte[] is not a long"); }
-            if (!BitConverter.IsLittleEndian) { bytes.Reverse(); }
+            if (!BitConverter.IsLittleEndian) { Array.Reverse(bytes); }
             return BitConverter.ToInt64(bytes, 0);
         }
 
@@ -194,7 +194,7 @@ namespace Akiyama.IPC.Shared.Network
         public static byte[] Int16ToBytes(short @short)
         {
             byte[] bytes = BitConverter.GetBytes(@short);
-            if (!BitConverter.IsLittleEndian) { bytes.Reverse(); }
+            if (!BitConverter.IsLittleEndian) { Array.Reverse(bytes); }
             return bytes;
         }
         /// <summary>
@@ -206,7 +206,7 @@ namespace Akiyama.IPC.Shared.Network
         /// <inheritdoc cref="BytesToShort(byte[])"/>
         public static short BytesToInt16(byte[] bytes)
         {
-            if (!BitConverter.IsLittleEndian) { bytes.Reverse(); }
+            if (!BitConverter.IsLittleEndian) { Array.Reverse(bytes); }
             return BitConverter.ToInt16(bytes, 0);
         }
 
@@ -250,7 +250,7 @@ namespace Akiyama.IPC.Shared.Network
         public static byte[] FloatToBytes(float @float)
         {
             byte[] bytes = BitConverter.GetBytes(@float);
-            if (!BitConverter.IsLittleEndian) { bytes.Reverse(); }
+            if (!BitConverter.IsLittleEndian) { Array.Reverse(bytes); }
             return bytes;
         }
         /// <summary>
@@ -262,7 +262,7 @@ namespace Akiyama.IPC.Shared.Network
         /// <inheritdoc cref="BytesToSingle(byte[])"/>
         public static float BytesToFloat(byte[] bytes)
         {
-            if (!BitConverter.IsLittleEndian) { bytes.Reverse(); }
+            if (!BitConverter.IsLittleEndian) { Array.Reverse(bytes); }
             return BitConverter.ToSingle(bytes, 0);
         }
 
@@ -274,7 +274,7 @@ namespace Akiyama.IPC.Shared.Network
         public static byte[] DoubleToBytes(double @double)
         {
             byte[] bytes = BitConverter.GetBytes(@double);
-            if (!BitConverter.IsLittleEndian) { bytes.Reverse(); }
+            if (!BitConverter.IsLittleEndian) { Array.Reverse(bytes); }
             return bytes;
         }
         /// <summary>
@@ -284,7 +284,7 @@ namespace Akiyama.IPC.Shared.Network
         /// <returns>A <see cref="Double"/> constructed from the bytes in <paramref name="bytes"/>.</returns>
         public static double BytesToDouble(byte[] bytes)
         {
-            if (!BitConverter.IsLittleEndian) { bytes.Reverse(); }
+            if (!BitConverter.IsLittleEndian) { Array.Reverse(bytes); }
             return BitConverter.ToDouble(bytes, 0);
         }
 
