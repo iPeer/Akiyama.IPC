@@ -12,9 +12,9 @@ The packet used in this example is a [`StringPacket`](~/api/Akiyama.IPC.Shared.N
 > Typically, a hexadecimal readout is 16 bytes per line, however for the sake of visualisation, here we are showing the `header` on the top line, and the `payload` on the bottom.
 
 ```
-              Payload     Packet
-| Packet ID | Length    | Ver.   | Custom header data                |
- 01 00 00 00 0B 00 00 00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 
+              Payload     Packet    ┎ Split packet indicator & split ID bytes
+| Packet ID | Length    | Ver.   |  v  | Custom header data                |
+ 01 00 00 00 0B 00 00 00 01 01 00 01 FF 00 00 00 00 00 00 00 00 00 00 00 00 
 | Payload                    ... |
  48 65 6C 6C 6F 20 57 6F 72 6C 64
 

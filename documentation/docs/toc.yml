@@ -13,5 +13,6 @@
     - href: packets-fundamentals.md
     - href: ipc-packet-protocol.md
     - href: creating-custom-packets.md
+    - href: splitting-packets.md
 
 - href: update-history.md

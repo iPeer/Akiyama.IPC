@@ -136,7 +136,7 @@ namespace Akiyama.IPC.Shared.Network
         public event EventHandler<OnPacketReceivedEventArgs> PacketReceived;
 
         /// <summary>
-        /// Occurs when this <see cref="IPCEndpoint"/> has complete fully receviving a split packet via its <see cref="SplitPacketContainer"/>.
+        /// Occurs when this <see cref="IPCEndpoint"/> has fully received a split packet via its <see cref="SplitPacketContainer"/>.
         /// </summary>
         /// <remarks>Added in 1.2.0</remarks>
         public event EventHandler<OnAllSplitPacketsReceivedEventArgs> SplitPacketsReceived;
