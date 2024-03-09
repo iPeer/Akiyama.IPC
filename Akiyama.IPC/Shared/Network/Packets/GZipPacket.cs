@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.IO.Compression;
 
 namespace Akiyama.IPC.Shared.Network.Packets
@@ -64,6 +65,17 @@ namespace Akiyama.IPC.Shared.Network.Packets
                     }
                 }
             }
+
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (this._disposed) return;
+            if (disposing)
+            {
+                this.DataBytes = Array.Empty<byte>();
+            }
+            base.Dispose(disposing);
 
         }
 
