@@ -1,10 +1,6 @@
 ﻿using Akiyama.IPC.Shared.Exceptions;
 using Akiyama.IPC.Shared.Network.Packets;
 using Akiyama.IPC.Shared.Typers;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace Akiyama.IPC.Shared.Network
@@ -370,7 +366,6 @@ namespace Akiyama.IPC.Shared.Network
         /// <br />If <paramref name="lengthLimit"/> is equal to or greater than the current payload length of <paramref name="packet"/>, a list containing the unmodified will be returned.
         /// <br />Throws <see cref="TooManySplitsException"/> is the resulting split would result in &gt;256 packets.
         /// <br /><br /><b>WARNING</b>: This method may be destructive to previously existing Custom Header Bytes. This method assigns the packet's current index into the split, and the total number of splits to the first two bytes of Custom Header Bytes respectively.
-        /// <br /><br /><b>WARNING</b>: The initial packet given to this method will automatically be disposed of after it has been split. If you need to retain the initial packet, consider using <see cref="SplitPacket(Packet, int, out Packet)"/> instead.
         /// <br /><br /><b>NOTE</b>: Packet split indexes are zero-indexed, ie. the FIRST packet in the split will have a split index of 0.
         /// </summary>
         /// <param name="packet">The packet to split</param>
@@ -379,10 +374,10 @@ namespace Akiyama.IPC.Shared.Network
         /// <exception cref="TooManySplitsException"></exception>
         public static List<Packet> SplitPacket(Packet packet, int lengthLimit)
         {
-            return SplitPacketInternal(packet, lengthLimit, true);
+            return SplitPacketInternal(packet, lengthLimit, 0, true);
         }
         /// <summary>
-        /// Splits <paramref name="packet"/> into enough packets of its type given <paramref name="lengthLimit"/>.
+        /// Splits <paramref name="packet"/> into enough packets of its type given <paramref name="lengthLimit"/>, using the split ID of <paramref name="customSplitId"/>.
         /// <br />If <paramref name="lengthLimit"/> is equal to or greater than the current payload length of <paramref name="packet"/>, a list containing the unmodified will be returned.
         /// <br />Throws <see cref="TooManySplitsException"/> is the resulting split would result in &gt;256 packets.
         /// <br /><br /><b>WARNING</b>: This method may be destructive to previously existing Custom Header Bytes. This method assigns the packet's current index into the split, and the total number of splits to the first two bytes of Custom Header Bytes respectively.
@@ -390,13 +385,12 @@ namespace Akiyama.IPC.Shared.Network
         /// </summary>
         /// <param name="packet">The packet to split</param>
         /// <param name="lengthLimit">The length size at which to split the packet.</param>
-        /// <param name="originalPacket">The packet that was originally passed to this method</param>
+        /// <param name="customSplitId">The split ID to assign to the packet's pieces so they can be identified as part of the same packet at the receiving side.</param>
         /// <returns>A typed list containing packets derived from <paramref name="packet"/> with their payload split at <paramref name="lengthLimit"/> intervals.</returns>
         /// <exception cref="TooManySplitsException"></exception>
-        public static List<Packet>SplitPacket(Packet packet, int lengthLimit, out Packet originalPacket)
+        public static List<Packet> SplitPacket(Packet packet, int lengthLimit, byte customSplitId)
         {
-            originalPacket = packet;
-            return SplitPacketInternal(packet, lengthLimit, false);
+            return SplitPacketInternal(packet, lengthLimit, customSplitId, false);
         }
         /// <summary>
         /// Splits <paramref name="packet"/> into enough packets of its type given <paramref name="lengthLimit"/>.
@@ -411,7 +405,7 @@ namespace Akiyama.IPC.Shared.Network
         /// <returns>A typed list containing packets derived from <paramref name="packet"/> with their payload split at <paramref name="lengthLimit"/> intervals.</returns>
         /// <exception cref="TooManySplitsException"></exception>
         /// <exclude/>
-        private static List<Packet> SplitPacketInternal(Packet packet, int lengthLimit, bool dispose = true)
+        private static List<Packet> SplitPacketInternal(Packet packet, int lengthLimit, byte customSplitId, bool ignoreCustomSplitId = true)
         {
             packet.Prepare(); // BF 07/03/24: Ensure the packet is prepared (if it overrides) before splitting payload)
             if (lengthLimit >= packet.PayloadLength)
@@ -423,8 +417,16 @@ namespace Akiyama.IPC.Shared.Network
             Type pType = packet.GetType();
             DateTime time = DateTime.Now;
             // Calculate the packet's splitId
-            int @base = time.Hour + time.Minute + time.Second;
-            byte splitId = (byte)(@base + (int)Math.Floor((double)((1 + (time.Ticks % 10000)) / 114) % 255));
+            byte splitId;
+            if (ignoreCustomSplitId)
+            {
+                int @base = time.Hour + time.Minute + time.Second;
+                splitId = (byte)(@base + (int)Math.Floor((double)((1 + (time.Ticks % 10000)) / 114) % 255));
+            }
+            else
+            {
+                splitId = customSplitId;
+            }
             List<Packet> @out = new List<Packet>();
             for (int x = 0; x <= maxSplits; x++)
             {
@@ -438,7 +440,7 @@ namespace Akiyama.IPC.Shared.Network
                 splitPacket.SetCustomHeaderBytes(new byte[] { (byte)x, (byte)maxSplits }, 0);
                 @out.Add(splitPacket);
             }
-            if (dispose) { packet.Dispose(); }
+            packet.Dispose();
             return @out;
         }
 
