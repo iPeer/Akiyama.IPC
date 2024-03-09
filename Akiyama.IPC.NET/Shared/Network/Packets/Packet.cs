@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Akiyama.IPC.Shared.Network.Packets
 {
@@ -41,9 +40,6 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// <br/><br/><b>Note</b>: Data should not be directly written to this Property. <see cref="Packet.SetPayload(byte[])"/> should be used for that instead.
         /// </summary>
         public byte[] Payload { get; private set; } = Array.Empty<byte>(); // BF-08-02-2024: Prevent Data from defaulting to null in packets that don't pass any data
-        /// <inheritdoc cref="Payload"/>
-        [Obsolete("This Property is deprecated and will be removed in a future update. Use Payload instead.")]
-        public byte[] Data { get { return this.Payload; } }
         /// <summary>
         /// This <see cref="Packet"/>'s Custom Header Bytes.
         /// </summary>
@@ -59,12 +55,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// </summary>
         public int HeaderLength => this.Header.Length;
         /// <summary>
-        /// Returns the length this Packet's <see cref="Payload"/> (payload).
-        /// </summary>
-        [Obsolete("This Property is deprecated and will be removed in a future update. Use PayloadLength instead")]
-        public int DataLength => this.Payload.Length;
-        /// <summary>
-        /// Returns the length this Packet's <see cref="Payload"/> (payload).
+        /// Returns the length this Packet's <see cref="Payload"/>.
         /// </summary>
         public int PayloadLength => this.Payload.Length;
         /// <summary>
@@ -106,9 +97,6 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// <br />This is set via the class' constructor, or <see cref="SetMaxLength(int)"/>.
         /// </summary>
         public int MaxPayloadLength { get; private set; } = int.MaxValue;
-        /// <inheritdoc cref="MaxPayloadLength"/>
-        [Obsolete("This Property is deprecated and will be removed in a future update. Use MaxPayloadLength instead.")]
-        public int MaxDataLength {  get { return this.MaxPayloadLength; } }
 
         /// <summary>
         /// Creates a new instance of this <see cref="Packet"/> with no predfined restrictions or content.
@@ -203,9 +191,6 @@ namespace Akiyama.IPC.Shared.Network.Packets
             this.Payload = data;
             if (!this.AutomaticHeaderUpdatesDisabled) { this.UpdateHeader(); }
         }
-        /// <inheritdoc cref="SetPayload(byte[])"/>
-        [Obsolete("This method is deprecated and will be removed in a future update. Use SetPayload(byte[]) instead.")]
-        public void SetData(byte[] data) => SetPayload(data);
 
         /// <summary>
         /// Appends <paramref name="bytes"/> to this <see cref="Packet"/>'s current Payload.
