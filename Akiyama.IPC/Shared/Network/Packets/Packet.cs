@@ -421,8 +421,9 @@ namespace Akiyama.IPC.Shared.Network.Packets
             if (this._disposed) return;
             if (disposing)
             {
-                this.Header = null;
-                this.Payload = null;
+                this.Header = Array.Empty<byte>();
+                this.Payload = Array.Empty<byte>();
+                this.CustomHeaderBytes = Array.Empty<byte>();
             }
             this._disposed = true;
         }
