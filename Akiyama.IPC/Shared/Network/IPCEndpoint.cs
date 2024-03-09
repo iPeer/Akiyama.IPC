@@ -404,7 +404,7 @@ namespace Akiyama.IPC.Shared.Network
 
                 // This loop reads IN_STREAM to check if we have any data on it
                 int _byte;
-                while (this.IN_STREAM.IsConnected && (_byte = this.IN_STREAM.ReadByte()) != -1 && !this.IsShuttingDown && this.IsRunning)
+                while (!this.IsShuttingDown && this.IsRunning && this.IN_STREAM.IsConnected && (_byte = this.IN_STREAM.ReadByte()) != -1)
                 {
                     byte rBytes = (byte)_byte; // Just to make things easier
                     if (rBytes == PacketConstructor.PRE_PACKET_BYTE) // If the data starts with this magic byte, we got a packet - Later make this configurable??? (Also yes, I used the funny number)
