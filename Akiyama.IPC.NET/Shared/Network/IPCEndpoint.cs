@@ -1,14 +1,8 @@
 ﻿using Akiyama.IPC.Shared.Events;
 using Akiyama.IPC.Shared.Helpers;
 using Akiyama.IPC.Shared.Network.Packets;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.IO.Pipes;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Akiyama.IPC.Shared.Network
 {
@@ -426,8 +420,6 @@ namespace Akiyama.IPC.Shared.Network
                         }
                         else // Otherwise, treat the packet as a normal one
                         {
-                            // When we receive a split packet, its Populate() method is never called on creation, if the packet is split but failed the check above, call its Populate method
-                            if (packet.IsSplit) { packet.Populate(); }
                             this.OnPacketReceived(new OnPacketReceivedEventArgs(packet));
                             packet.Dispose();
                         }

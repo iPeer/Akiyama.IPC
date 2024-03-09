@@ -13,7 +13,7 @@ Before going in to this section, there are several things that need to be detail
 > * When sending multiple split packets at once (actual separate packets that have been split - not the pieces themselves), there is no guarantee they will arrive in the same order they are sent.
 > * Before a packet is split into its pieces, its `Prepare` method is called.
 > * Packets that have been split will not have their `Prepare` methods called *before sending*.
-> * Packets that have been split will not have their `Populate` methods called after receiving, ***unless*** `AutoHandleSplitPackets` is `false` on the receiving [endpoint](~/api/Akiyama.IPC.Shared.Network.IPCEndpoint.yml).
+> * Packets that have been split will not have their `Populate` methods called after receiving.
 > * The Packet's split index (what # piece this specific packet is in the split) will be at the **first** byte within the [Custom Header Bytes](packets-fundamentals.md#custom-header-data).
 > * The total splits in a packet's respective split will be at the **second** byte within the [Custom Header Bytes](packets-fundamentals.md#custom-header-data).
 > * Both the split index, and split total are **zero-based**. More details in [Split Packet Custom Header Bytes](#split-packet-custom-header-bytes).

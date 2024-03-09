@@ -426,8 +426,6 @@ namespace Akiyama.IPC.Shared.Network
                         }
                         else // Otherwise, treat the packet as a normal one
                         {
-                            // When we receive a split packet, its Populate() method is never called on creation, if the packet is split but failed the check above, call its Populate method
-                            if (packet.IsSplit) { packet.Populate(); }
                             this.OnPacketReceived(new OnPacketReceivedEventArgs(packet));
                             packet.Dispose();
                         }
