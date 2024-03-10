@@ -275,10 +275,10 @@ namespace Akiyama.IPC.Shared.Network
         {
             // TODO: Maybe rewrite this part to use 'using'?
             // The send task cannot (theoretically) hang forever, so we don't need to be able to cancel it during shutdown as it will presumably finish eventually
-            Task send = Task.Run(() => this.OUT_STREAM.Write(bytes, 0, bytes.Length));
+            Task send = Task.Run(() => this.OUT_STREAM?.Write(bytes, 0, bytes.Length));
             send.Wait();
             // The drain task, however...
-            Task drain = Task.Run(() => this.OUT_STREAM.WaitForPipeDrain());
+            Task drain = Task.Run(() => this.OUT_STREAM?.WaitForPipeDrain());
             try
             {
                 drain.Wait(cancellationToken: this.pipeDrainCancellationToken.Token);
