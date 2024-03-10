@@ -112,6 +112,7 @@ namespace Akiyama.IPC.Shared.Network
         /// <br /><b>Note</b>: If this property is <see langword="true"/>, received packets that are split will not raise the <see cref="PacketReceived"/> event. Instead, the <see cref="SplitPacketsReceived"/> will be raised when all pieces of the <see cref="Packet"/> have been received.
         /// <br />If this property is <see langword="false"/>, <see cref="PacketReceived"/> will be raised for each individual packet.
         /// </summary>
+        /// <remarks>Added in 1.2.0</remarks>
         public bool AutoHandleSplitPackets { get; set; } = true;
 
         /// <summary>

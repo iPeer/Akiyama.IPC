@@ -25,6 +25,7 @@ namespace Akiyama.IPC.Shared.Network
         /// The absolute maximum number of times any one <see cref="Packet"/> may be split.
         /// <br />Packet splitting operations that would result in a number of splits greater than this number will throw a <see cref="TooManySplitsException"/>.
         /// </summary>
+        /// <remarks>Added in 1.2.0</remarks>
         public const int MAX_PACKET_SPLITS = byte.MaxValue;
 
         /// <summary>
@@ -375,6 +376,7 @@ namespace Akiyama.IPC.Shared.Network
         /// <param name="lengthLimit">The length size at which to split the packet.</param>
         /// <returns>A typed list containing packets derived from <paramref name="packet"/> with their payload split at <paramref name="lengthLimit"/> intervals.</returns>
         /// <exception cref="TooManySplitsException"></exception>
+        /// <remarks>Added in 1.2.0</remarks>
         public static List<Packet> SplitPacket(Packet packet, int lengthLimit)
         {
             return SplitPacketInternal(packet, lengthLimit, 0, true);
@@ -391,6 +393,7 @@ namespace Akiyama.IPC.Shared.Network
         /// <param name="customSplitId">The split ID to assign to the packet's pieces so they can be identified as part of the same packet at the receiving side.</param>
         /// <returns>A typed list containing packets derived from <paramref name="packet"/> with their payload split at <paramref name="lengthLimit"/> intervals.</returns>
         /// <exception cref="TooManySplitsException"></exception>
+        /// <remarks>Added in 1.2.0</remarks>
         public static List<Packet> SplitPacket(Packet packet, int lengthLimit, byte customSplitId)
         {
             return SplitPacketInternal(packet, lengthLimit, customSplitId, false);
@@ -407,6 +410,7 @@ namespace Akiyama.IPC.Shared.Network
         /// <param name="dispose">If <see langword="true"/>, <paramref name="packet"/> will be disposed of once splitting is complete.</param>
         /// <returns>A typed list containing packets derived from <paramref name="packet"/> with their payload split at <paramref name="lengthLimit"/> intervals.</returns>
         /// <exception cref="TooManySplitsException"></exception>
+        /// <remarks>Added in 1.2.0</remarks>
         /// <exclude/>
         private static List<Packet> SplitPacketInternal(Packet packet, int lengthLimit, byte customSplitId, bool ignoreCustomSplitId = true)
         {
