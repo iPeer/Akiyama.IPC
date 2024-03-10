@@ -1,14 +1,13 @@
 ﻿using Akiyama.IPC.Shared.Exceptions;
 using Akiyama.IPC.Shared.Network.Packets;
 using Akiyama.IPC.Shared.Typers;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace Akiyama.IPC.Shared.Network
 {
+    /// <summary>
+    /// This class is responsible for constructing incoming packets for an <see cref="IPCEndpoint"/>, and also contains <see langword="static"/> conversion methods for data types.
+    /// </summary>
     public class PacketConstructor
     {
 
