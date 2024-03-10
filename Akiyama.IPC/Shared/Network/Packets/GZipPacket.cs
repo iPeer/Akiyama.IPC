@@ -70,7 +70,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
 
         protected override void Dispose(bool disposing)
         {
-            if (this._disposed) return;
+            if (this.Disposed) return;
             if (disposing)
             {
                 this.DataBytes = Array.Empty<byte>();

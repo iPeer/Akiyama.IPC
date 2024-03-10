@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Akiyama.IPC.Shared.Network.Packets
 {
@@ -13,14 +12,13 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// <summary>
         /// <see langword="true"/> if this instance has been disposed, otherwise <see langword="false"/>.
         /// </summary>
-        /// <exclude/>
-        internal bool _disposed;
+        public bool Disposed { get; private set; }
         /// <summary>
         /// Returns the minimum functional header length that contains enough space for all the required elements. This field is <see langword="static"/> and <see langword="readonly"/>.
         /// </summary>
         /// <remarks>Added in 1.1.0</remarks>
         public static readonly int BASE_HEADER_SIZE = ((sizeof(byte) * 3) + (sizeof(int) * 2) + sizeof(byte) + sizeof(byte));
-                                                     //   VERSION BYTES      ID + Payload Len     IsSplit        <unused>
+        //                                                VERSION BYTES      ID + Payload Len     IsSplit        SplitID
 
         /// <summary>
         /// The number of bytes to add to <see cref="BASE_HEADER_SIZE"/> for user-customisable bytes. This field is <see langword="static"/> and <see langword="readonly"/>.
@@ -424,14 +422,14 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// <param name="disposing">If <see langword="true"/>, indicates that this class is being disposed of right now.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (this._disposed) return;
+            if (this.Disposed) return;
             if (disposing)
             {
                 this.Header = Array.Empty<byte>();
                 this.Payload = Array.Empty<byte>();
                 this.CustomHeaderBytes = Array.Empty<byte>();
             }
-            this._disposed = true;
+            this.Disposed = true;
         }
     }
 }
