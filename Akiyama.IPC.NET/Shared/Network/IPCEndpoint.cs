@@ -1,8 +1,14 @@
 ﻿using Akiyama.IPC.Shared.Events;
 using Akiyama.IPC.Shared.Helpers;
 using Akiyama.IPC.Shared.Network.Packets;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.IO.Pipes;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Akiyama.IPC.Shared.Network
 {
@@ -59,6 +65,17 @@ namespace Akiyama.IPC.Shared.Network
         /// This <see cref="IPCEndpoint"/>'s inbound network stream.
         /// </summary>
         protected NamedPipeClientStream IN_STREAM;
+
+        /// <summary>
+        /// The total number of bytes that have been sent by this <see cref="IPCEndpoint"/>.
+        /// </summary>
+        /// <remarks>Added in 1.2.0</remarks>
+        public long BytesSent { get; private set; } = 0L;
+        /// <summary>
+        /// The total number of bytes that have been received by this <see cref="IPCEndpoint"/>.
+        /// </summary>
+        /// <remarks>Added in 1.2.0</remarks>
+        public long BytesReceived { get; private set; } = 0L;
 
         /// <summary>
         /// In <see langword="true"/>, indicates that this <see cref="IPCEndpoint"/> has been disposed of.
@@ -342,6 +359,7 @@ namespace Akiyama.IPC.Shared.Network
             {
                 packet.Dispose();
             }
+            this.BytesSent += pBytes.Length;
             this.SendBytes(pBytes);
         }
 
@@ -404,6 +422,7 @@ namespace Akiyama.IPC.Shared.Network
                     if (rBytes == PacketConstructor.PRE_PACKET_BYTE) // If the data starts with this magic byte, we got a packet - Later make this configurable??? (Also yes, I used the funny number)
                     {
                         Packet packet = this.PacketConstructor.CreateFromStream(this.IN_STREAM);
+                        this.BytesReceived += (1 + packet.TotalLength);
                         // If the packet IS split, call or create its SplitPacketContainer, and add the packet to it
                         if (packet.IsSplit && this.AutoHandleSplitPackets)
                         {
