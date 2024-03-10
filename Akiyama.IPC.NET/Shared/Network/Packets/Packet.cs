@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 namespace Akiyama.IPC.Shared.Network.Packets
 {
@@ -13,7 +14,7 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// <see langword="true"/> if this instance has been disposed, otherwise <see langword="false"/>.
         /// </summary>
         /// <exclude/>
-        private bool _disposed;
+        internal bool _disposed;
         /// <summary>
         /// Returns the minimum functional header length that contains enough space for all the required elements. This field is <see langword="static"/> and <see langword="readonly"/>.
         /// </summary>
@@ -411,17 +412,24 @@ namespace Akiyama.IPC.Shared.Network.Packets
         /// </summary>
         public void Dispose()
         {
-            Dispose(disposing: true);
+            this.Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Handles the disposing of this object.
+        /// <br /><br /><b>Note</b>: This method is called automatically when this object is being disposed. To manually dispose of this object, call <see cref="Dispose()"/> instead.
+        /// <br /><br /><b>WARNING</b>: If overriden by a child class, the child class should take care to call <c>base.Dispose(bool)</c> or packets may not be completely disposed.
+        /// </summary>
+        /// <param name="disposing">If <see langword="true"/>, indicates that this class is being disposed of right now.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (this._disposed) return;
             if (disposing)
             {
-                this.Header = null;
-                this.Payload = null;
+                this.Header = Array.Empty<byte>();
+                this.Payload = Array.Empty<byte>();
+                this.CustomHeaderBytes = Array.Empty<byte>();
             }
             this._disposed = true;
         }
