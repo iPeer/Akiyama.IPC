@@ -1,6 +1,10 @@
 ﻿using Akiyama.IPC.Shared.Exceptions;
 using Akiyama.IPC.Shared.Network.Packets;
 using Akiyama.IPC.Shared.Typers;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Akiyama.IPC.Shared.Network
@@ -364,7 +368,7 @@ namespace Akiyama.IPC.Shared.Network
         /// <summary>
         /// Splits <paramref name="packet"/> into enough packets of its type given <paramref name="lengthLimit"/>.
         /// <br />If <paramref name="lengthLimit"/> is equal to or greater than the current payload length of <paramref name="packet"/>, a list containing the unmodified will be returned.
-        /// <br />Throws <see cref="TooManySplitsException"/> is the resulting split would result in &gt;256 packets.
+        /// <br />Throws <see cref="TooManySplitsException"/> if the resulting split would result in &gt;256 packets.
         /// <br /><br /><b>WARNING</b>: This method may be destructive to previously existing Custom Header Bytes. This method assigns the packet's current index into the split, and the total number of splits to the first two bytes of Custom Header Bytes respectively.
         /// <br /><br /><b>NOTE</b>: Packet split indexes are zero-indexed, ie. the FIRST packet in the split will have a split index of 0.
         /// </summary>
@@ -379,7 +383,7 @@ namespace Akiyama.IPC.Shared.Network
         /// <summary>
         /// Splits <paramref name="packet"/> into enough packets of its type given <paramref name="lengthLimit"/>, using the split ID of <paramref name="customSplitId"/>.
         /// <br />If <paramref name="lengthLimit"/> is equal to or greater than the current payload length of <paramref name="packet"/>, a list containing the unmodified will be returned.
-        /// <br />Throws <see cref="TooManySplitsException"/> is the resulting split would result in &gt;256 packets.
+        /// <br />Throws <see cref="TooManySplitsException"/> if the resulting split would result in &gt;256 packets.
         /// <br /><br /><b>WARNING</b>: This method may be destructive to previously existing Custom Header Bytes. This method assigns the packet's current index into the split, and the total number of splits to the first two bytes of Custom Header Bytes respectively.
         /// <br /><br /><b>NOTE</b>: Packet split indexes are zero-indexed, ie. the FIRST packet in the split will have a split index of 0.
         /// </summary>
@@ -395,7 +399,7 @@ namespace Akiyama.IPC.Shared.Network
         /// <summary>
         /// Splits <paramref name="packet"/> into enough packets of its type given <paramref name="lengthLimit"/>.
         /// <br />If <paramref name="lengthLimit"/> is equal to or greater than the current payload length of <paramref name="packet"/>, a list containing the unmodified will be returned.
-        /// <br />Throws <see cref="TooManySplitsException"/> is the resulting split would result in &gt;256 packets.
+        /// <br />Throws <see cref="TooManySplitsException"/> if the resulting split would result in &gt;256 packets.
         /// <br /><br /><b>WARNING</b>: This method may be destructive to previously existing Custom Header Bytes. This method assigns the packet's current index into the split, and the total number of splits to the first two bytes of Custom Header Bytes respectively.
         /// <br /><br /><b>NOTE</b>: Packet split indexes are zero-indexed, ie. the FIRST packet in the split will have a split index of 0.
         /// </summary>
