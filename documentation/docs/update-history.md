@@ -1,7 +1,8 @@
 # Update History
 
 ## 1.2.0
-
+* Both versions of the framework (.NETFramework and .NET6+) now utilise a shared codebase instead of separate ones.
+  - **Note**: This is a non-breaking change and will not require any changes to existing implementations.
 * `IPCEndpoint` class received the following changes:
   - Can now natively support and automatically combine incoming split packets.
   - New Properties:
