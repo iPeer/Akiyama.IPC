@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>68cc5250-ab78-408b-b532-eb30ffe12fe1</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Akiyama.IPC.Core</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)AssemblyInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client\IPCClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Server\IPCServer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Constants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Events\OnAllSplitPacketsReceivedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Events\OnPacketReceivedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Exceptions\IncorrectPacketVersionException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Exceptions\TooManySplitsException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Exceptions\UnknownPacketException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Helpers\SplitPacketContainer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Network\IPCEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Network\PacketConstructor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Network\Packets\GenericDataPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Network\Packets\GZipPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Network\Packets\IntPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Network\Packets\LongPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Network\Packets\Packet.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Network\Packets\ShortPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Network\Packets\StringPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Network\Packets\TestPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Network\Packets\UIntPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Network\Packets\ULongPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Network\Packets\UShortPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Network\PacketType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Typers\DefaultPacketTyper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\Typers\PacketTyper.cs" />
+  </ItemGroup>
+</Project>
