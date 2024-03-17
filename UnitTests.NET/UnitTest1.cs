@@ -185,7 +185,7 @@ namespace UnitTests.NET
         {
             // Passes if the library correctly raises a TooManySplitsException when trying to split a packet more than 256 times
             byte[] testPayload = new byte[513];
-            using (TestPacket tp = new TestPacket())
+            using (GenericDataPacket tp = new GenericDataPacket())
             {
                 tp.SetPayload(testPayload);
                 Assert.ThrowsException<TooManySplitsException>(() => { List<Packet> list = PacketConstructor.SplitPacket(tp, 2); }); // A split of 2 against a packet payload of 513 bytes, should result in 257 packets, which is not allowed
@@ -197,7 +197,7 @@ namespace UnitTests.NET
         {
             // Passes if the library correctly raises a TooManySplitsException when trying to split a packet more than 256 times
             byte[] testPayload = new byte[510];
-            using (TestPacket tp = new TestPacket())
+            using (GenericDataPacket tp = new GenericDataPacket())
             {
                 tp.SetPayload(testPayload.Concat(new byte[] { 69, 69 }).ToArray());
                 List<Packet> list = PacketConstructor.SplitPacket(tp, 2);
@@ -210,10 +210,9 @@ namespace UnitTests.NET
         public void PacketSplitTen()
         {
             // Passes if the library correctly raises a TooManySplitsException when trying to split a packet more than 256 times
-            byte[] testPayload = new byte[20];
-            using (TestPacket tp = new TestPacket())
+            using (StringPacket tp = new StringPacket())
             {
-                tp.SetPayload(testPayload);
+                tp.Text = "11223344556677889900";
                 List<Packet> list = PacketConstructor.SplitPacket(tp, 2);
                 Assert.AreEqual(10, list.Count);
             }
@@ -225,7 +224,7 @@ namespace UnitTests.NET
             byte[] payloadOne = new byte[] { 1, 2, 3, 4, 5 };
             byte[] payloadTwo = new byte[] { 6, 7, 8, 9, 10 };
 
-            using (TestPacket tp = new TestPacket())
+            using (GenericDataPacket tp = new GenericDataPacket())
             {
                 tp.SetPayload(payloadOne.Concat(payloadTwo).ToArray());
                 List<Packet> list = PacketConstructor.SplitPacket(tp, 5);
