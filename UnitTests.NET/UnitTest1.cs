@@ -188,7 +188,7 @@ namespace UnitTests.NET
             using (GenericDataPacket tp = new GenericDataPacket())
             {
                 tp.SetPayload(testPayload);
-                Assert.ThrowsException<TooManySplitsException>(() => { List<Packet> list = PacketConstructor.SplitPacket(tp, 2); }); // A split of 2 against a packet payload of 513 bytes, should result in 257 packets, which is not allowed
+                Assert.ThrowsException<TooManySplitsException>(() => { List<GenericDataPacket> list = PacketConstructor.SplitPacket(tp, 2); }); // A split of 2 against a packet payload of 513 bytes, should result in 257 packets, which is not allowed
             }
         }
 
@@ -200,7 +200,7 @@ namespace UnitTests.NET
             using (GenericDataPacket tp = new GenericDataPacket())
             {
                 tp.SetPayload(testPayload.Concat(new byte[] { 69, 69 }).ToArray());
-                List<Packet> list = PacketConstructor.SplitPacket(tp, 2);
+                List<GenericDataPacket> list = PacketConstructor.SplitPacket(tp, 2);
                 Assert.AreEqual(PacketConstructor.MAX_PACKET_SPLITS, (list.Count - 1)); // We - 1 on count here because PacketConstructor.MAX_PACKET_SPLITS
                                                                                         // is on the assumption that 1 == 0, 2 == 1, etc. thus meaning that 255 == 256.
             }
@@ -213,7 +213,7 @@ namespace UnitTests.NET
             using (StringPacket tp = new StringPacket())
             {
                 tp.Text = "11223344556677889900";
-                List<Packet> list = PacketConstructor.SplitPacket(tp, 2);
+                List<StringPacket> list = PacketConstructor.SplitPacket(tp, 2);
                 Assert.AreEqual(10, list.Count);
             }
         }
@@ -227,7 +227,7 @@ namespace UnitTests.NET
             using (GenericDataPacket tp = new GenericDataPacket())
             {
                 tp.SetPayload(payloadOne.Concat(payloadTwo).ToArray());
-                List<Packet> list = PacketConstructor.SplitPacket(tp, 5);
+                List<GenericDataPacket> list = PacketConstructor.SplitPacket(tp, 5);
                 Packet packetOne = list.First();
                 Packet packetTwo = list.Last();
                 TestContext.WriteLine($"Payload One: 0x{string.Join(", 0x", packetOne.Payload)}");

@@ -16,8 +16,8 @@
   - New Fields:
     - [MAX_PACKET_SPLITS](~/api/Akiyama.IPC.Shared.Network.PacketConstructor.yml#Akiyama_IPC_Shared_Network_PacketConstructor_MAX_PACKET_SPLITS)
   - New Methods:
-    - [SplitPacket(Packet, int)](~/api/Akiyama.IPC.Shared.Network.PacketConstructor.yml#Akiyama_IPC_Shared_Network_PacketConstructor_SplitPacket_Akiyama_IPC_Shared_Network_Packets_Packet_System_Int32_)
-    - [SplitPacket(Packet, int, byte)](~/api/Akiyama.IPC.Shared.Network.PacketConstructor.yml#Akiyama_IPC_Shared_Network_PacketConstructor_SplitPacket_Akiyama_IPC_Shared_Network_Packets_Packet_System_Int32_System_Byte_)
+    - [SplitPacket(Packet, int)](~/api/Akiyama.IPC.Shared.Network.PacketConstructor.yml#Akiyama_IPC_Shared_Network_PacketConstructor_SplitPacket__1___0_System_Int32_)
+    - [SplitPacket(Packet, int, byte)](~/api/Akiyama.IPC.Shared.Network.PacketConstructor.yml#Akiyama_IPC_Shared_Network_PacketConstructor_SplitPacket__1___0_System_Int32_System_Byte_)
 * `Packet` class received the following changes:
   - `Packet._disposed` has been renamed to `Packet.Disposed`
   - `Packet.Disposed` is now also a publicly gettable Property.

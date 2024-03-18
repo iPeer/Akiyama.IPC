@@ -381,7 +381,7 @@ namespace Akiyama.IPC.Shared.Network
         /// <returns>A typed list containing packets derived from <paramref name="packet"/> with their payload split at <paramref name="lengthLimit"/> intervals.</returns>
         /// <exception cref="TooManySplitsException"></exception>
         /// <remarks>Added in 1.2.0</remarks>
-        public static List<Packet> SplitPacket(Packet packet, int lengthLimit)
+        public static List<TSource> SplitPacket<TSource>(TSource packet, int lengthLimit) where TSource : Packet
         {
             return SplitPacketInternal(packet, lengthLimit, 0, true);
         }
@@ -398,7 +398,7 @@ namespace Akiyama.IPC.Shared.Network
         /// <returns>A typed list containing packets derived from <paramref name="packet"/> with their payload split at <paramref name="lengthLimit"/> intervals.</returns>
         /// <exception cref="TooManySplitsException"></exception>
         /// <remarks>Added in 1.2.0</remarks>
-        public static List<Packet> SplitPacket(Packet packet, int lengthLimit, byte customSplitId)
+        public static List<TSource> SplitPacket<TSource>(TSource packet, int lengthLimit, byte customSplitId) where TSource : Packet
         {
             return SplitPacketInternal(packet, lengthLimit, customSplitId, false);
         }
@@ -416,16 +416,15 @@ namespace Akiyama.IPC.Shared.Network
         /// <exception cref="TooManySplitsException"></exception>
         /// <remarks>Added in 1.2.0</remarks>
         /// <exclude/>
-        private static List<Packet> SplitPacketInternal(Packet packet, int lengthLimit, byte customSplitId, bool ignoreCustomSplitId = true)
+        private static List<TSource> SplitPacketInternal<TSource>(TSource packet, int lengthLimit, byte customSplitId, bool ignoreCustomSplitId = true) where TSource : Packet
         {
             packet.Prepare(); // BF 07/03/24: Ensure the packet is prepared (if it overrides) before splitting payload)
             if (lengthLimit >= packet.PayloadLength)
             {
-                return new List<Packet> { packet };
+                return new List<TSource> { packet };
             }
             int maxSplits = ((int)Math.Ceiling((double)((double)packet.PayloadLength / (double)lengthLimit) - 1d));
             if (maxSplits > MAX_PACKET_SPLITS) { throw new TooManySplitsException(lengthLimit, maxSplits); }
-            Type pType = packet.GetType();
             DateTime time = DateTime.Now;
             // Calculate the packet's splitId
             byte splitId;
@@ -438,10 +437,10 @@ namespace Akiyama.IPC.Shared.Network
             {
                 splitId = customSplitId;
             }
-            List<Packet> @out = new List<Packet>();
+            List<TSource> @out = new List<TSource>();
             for (int x = 0; x <= maxSplits; x++)
             {
-                Packet splitPacket = (Packet)Activator.CreateInstance(pType);
+                TSource splitPacket = (TSource)Activator.CreateInstance(typeof(TSource));
                 splitPacket.SetMaxLength(lengthLimit);
                 int offset = (x * lengthLimit);
                 byte[] bytes = packet.Payload.Skip(offset).Take(lengthLimit).ToArray();

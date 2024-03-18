@@ -23,14 +23,14 @@ Before going in to this section, there are several things that need to be detail
 > * Multiple split packets of the same type can be handled at the same time.
 > * Each "part" of a split packet is called a "piece".
 > * A "split" is a collection of "pieces".
-> * If you wish to handle the `SplitID` yourself, you can do so via the [SplitPacket(Packet, int, byte)](~/api/Akiyama.IPC.Shared.Network.PacketConstructor.yml#Akiyama_IPC_Shared_Network_PacketConstructor_SplitPacket_Akiyama_IPC_Shared_Network_Packets_Packet_System_Int32_System_Byte_) overload.
+> * If you wish to handle the `SplitID` yourself, you can do so via the [SplitPacket(Packet, int, byte)](~/api/Akiyama.IPC.Shared.Network.PacketConstructor.yml#Akiyama_IPC_Shared_Network_PacketConstructor_SplitPacket__1___0_System_Int32_System_Byte_) overload.
 
 ## Splitting Packets
 
 > [!WARNING]
 > The packet you are splitting will be disposed of after it has been split.
 
-To split a packet, simply use the [SplitPacket](~/api/Akiyama.IPC.Shared.Network.PacketConstructor.yml#Akiyama_IPC_Shared_Network_PacketConstructor_SplitPacket_Akiyama_IPC_Shared_Network_Packets_Packet_System_Int32_) method within the [PacketConstructor](~/api/Akiyama.IPC.Shared.Network.PacketConstructor.yml) class.
+To split a packet, simply use the [SplitPacket](~/api/Akiyama.IPC.Shared.Network.PacketConstructor.yml#Akiyama_IPC_Shared_Network_PacketConstructor_SplitPacket__1___0_System_Int32_) method within the [PacketConstructor](~/api/Akiyama.IPC.Shared.Network.PacketConstructor.yml) class.
 
 ```csharp
 List<Packet> splits = PacketConstructor.SplitPacket(myPacket, 5000);
@@ -39,9 +39,8 @@ This code above will take `myPacket` and split it at every `5,000` bytes of its 
 
 > [!NOTE]
 > * If the packet does not need to be split, a list containing only the *original* packet will be returned.
-> * The source type of the `List` should always be `Packet` regardless of what the type of the packet you are splitting is.
 
-By default, all the packets created from the split by `SplitPacket` will be automatically assigned a `SplitID` value. This is so that the opposing endpoint can tell they are part of the same packet. If you wish to assign the IDs manually, see the [SplitPacket(Packet, int, byte)](~/api/Akiyama.IPC.Shared.Network.PacketConstructor.yml#Akiyama_IPC_Shared_Network_PacketConstructor_SplitPacket_Akiyama_IPC_Shared_Network_Packets_Packet_System_Int32_System_Byte_) overload.
+By default, all the packets created from the split by `SplitPacket` will be automatically assigned a `SplitID` value. This is so that the opposing endpoint can tell they are part of the same packet. If you wish to assign the IDs manually, see the [SplitPacket(Packet, int, byte)](~/api/Akiyama.IPC.Shared.Network.PacketConstructor.yml#Akiyama_IPC_Shared_Network_PacketConstructor_SplitPacket__1___0_System_Int32_System_Byte_) overload.
 
 Once the packet is split, we can send it to the opposing [endpoint](~/api/Akiyama.IPC.Shared.Network.IPCEndpoint.yml):
 ```csharp
